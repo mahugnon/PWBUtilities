@@ -1,12 +1,38 @@
+"
+I'm a Maryline tests generation runner
+Basically Insert logs and put protect in the right place to allow running with Tosca
+"
 Class {
 	#name : #MrlLoggerUtility,
 	#superclass : #PWBAbstractCommand,
+	#classVars : [
+		'uniqueInstance'
+	],
 	#category : #'PWBUtilities-PBLRegenerator'
 }
 
 { #category : #running }
+MrlLoggerUtility class >> reset [
+uniqueInstance := nil
+]
+
+{ #category : #running }
+MrlLoggerUtility class >> runOn: aPathToPowerbuilderProjectTargetString [
+	^ self uniqueInstance
+		pathToTarget: aPathToPowerbuilderProjectTargetString;
+		run
+]
+
+{ #category : #running }
+MrlLoggerUtility class >> uniqueInstance [
+	uniqueInstance ifNil: [ uniqueInstance := self new ].
+	^ uniqueInstance
+]
+
+{ #category : #running }
 MrlLoggerUtility >> createModules [
 	| moduleCreator |
+	self pathToModules deleteAll.
 	moduleCreator := CIMIzyFilesNavigatorModel new.
 	moduleCreator izyProtectRootFolder: self izySourceCode.
 	moduleCreator moduleFolder: self pathToModules
@@ -20,6 +46,7 @@ MrlLoggerUtility >> errorsLogFilePath [
 { #category : #running }
 MrlLoggerUtility >> inserLogForPrestation [
 	| famixModel |
+	MooseModel resetRoot.
 	famixModel := (PWBFamixImporter
 		importFromFolder: self pathToModules / 'Prestation')
 		name: 'Prestation';
@@ -65,9 +92,16 @@ MrlLoggerUtility >> pathToModules [
 	^ 'modules' asFileReference
 ]
 
+{ #category : #accessing }
+MrlLoggerUtility >> pathToTarget: anObject [
+	pathToTarget = anObject asFileReference
+		ifTrue: [ ^ self ].
+	pathToTarget := anObject asFileReference.
+	self createModules
+]
+
 { #category : #running }
 MrlLoggerUtility >> run [
-	self createModules.
 	self inserMrlLogsScriptsInPowerbuilderProject.
 	PBLRegenerator runOn: self powerbuilderProjetDirectory.
 	PWBBuilder runOn: self powerbuilderProjetDirectory

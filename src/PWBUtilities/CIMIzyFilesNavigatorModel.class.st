@@ -107,7 +107,7 @@ CIMIzyFilesNavigatorModel >> izyProtectRootFolder [
 CIMIzyFilesNavigatorModel >> izyProtectRootFolder: anObject [
 	izyProtectRootFolder := anObject.
 	bibliotheques := anObject directories collectAsSet: #basename.
-	browser setItems
+	browser ifNotNil: [ browser setItems ]
 ]
 
 { #category : #accessing }
