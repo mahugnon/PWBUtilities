@@ -4,22 +4,11 @@ I suppose that orcascript 17 is installed. If not you should change the  orcascr
 "
 Class {
 	#name : #PBLRegenerator,
-	#superclass : #Object,
-	#instVars : [
-		'pathToTarget',
-		'runner'
-	],
+	#superclass : #PWBAbstractCommand,
 	#category : #'PWBUtilities-PBLRegenerator'
 }
 
-{ #category : #running }
-PBLRegenerator class >> runOn: aPathToPowerbuilderProjectTargetString [
-	^ self new
-		pathToTarget: aPathToPowerbuilderProjectTargetString;
-		runOcascript
-]
-
-{ #category : #'as yet unclassified' }
+{ #category : #api }
 PBLRegenerator >> cleanUpPBg [
 	self powerbuilderProjetDirectory files
 		select: [ :file | file extension = 'pbg' ]
@@ -31,14 +20,19 @@ PBLRegenerator >> ensureCreateOrcascriptFile [
 	| file |
 	file := self powerbuilderProjetDirectory / 'refreshPbls.orca'.
 	file exists
-		ifFalse: [ file writeStreamDo: [ :stream | stream << self orcascript ] ].
+		ifFalse: [ file writeStreamDo: [ :stream | stream << self script ] ].
 	^ file
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #api }
 PBLRegenerator >> ensurePBGFilesAreWellSet [
 self cleanUpPBg .
 PBGRefactor runOn: self powerbuilderProjetDirectory 
+]
+
+{ #category : #accessing }
+PBLRegenerator >> errorsLogFilePath [
+	^ self powerbuilderProjetDirectory / 'errors.log'
 ]
 
 { #category : #initialization }
@@ -47,16 +41,25 @@ super initialize .
 runner := 'orcascr170'
 ]
 
-{ #category : #accessing }
-PBLRegenerator >> logFilePath [
-	^ self powerbuilderProjetDirectory / 'errors.log'
+{ #category : #running }
+PBLRegenerator >> run [
+	| command |
+	"Orcascript will put error log in the log file"
+	self ensurePBGFilesAreWellSet.
+	command := self runner , String space
+		, self ensureCreateOrcascriptFile pathString.
+	LibC runCommand: command.
+	self cleanUpPBg.
+	^ self errorsLogFilePath
+		readStreamEncoded: 'utf16le'
+		do: [ :stream | ^ stream contents ]
 ]
 
 { #category : #api }
-PBLRegenerator >> orcascript [
+PBLRegenerator >> script [
 	^ 'start session',String lf,
 'set debug true' ,String lf,
-'scc set connect property logfile "' , self logFilePath pathString
+'scc set connect property logfile "' , self errorsLogFilePath pathString
 		,
 			'"',String lf,
 'scc connect offline',String lf,
@@ -66,43 +69,4 @@ PBLRegenerator >> orcascript [
 'scc refresh target 3pass',String lf,
 'scc close',String lf,
 'end session'
-]
-
-{ #category : #accessing }
-PBLRegenerator >> pathToTarget [
-	^ pathToTarget
-]
-
-{ #category : #accessing }
-PBLRegenerator >> pathToTarget: anObject [
-	pathToTarget := anObject asFileReference
-]
-
-{ #category : #'as yet unclassified' }
-PBLRegenerator >> powerbuilderProjetDirectory [
-	^ pathToTarget parent
-]
-
-{ #category : #'as yet unclassified' }
-PBLRegenerator >> runOcascript [
-	| command |
-	"Orcascript will put error log in the log file"
-	self ensurePBGFilesAreWellSet.
-	command := self runner , String space
-		, self ensureCreateOrcascriptFile pathString.
-	LibC runCommand: command.
-	self cleanUpPBg.
-	^ self logFilePath
-		readStreamEncoded: 'utf16le'
-		do: [ :stream | ^ stream contents ]
-]
-
-{ #category : #'as yet unclassified' }
-PBLRegenerator >> runner [
-	^ runner
-]
-
-{ #category : #accessing }
-PBLRegenerator >> runner: anObject [
-	runner := anObject
 ]
