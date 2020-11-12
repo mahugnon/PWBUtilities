@@ -90,7 +90,7 @@ MrlLoggerUtility >> izySourceCode [
 
 { #category : #'as yet unclassified' }
 MrlLoggerUtility >> pathToModules [
-	^ 'modules' asFileReference
+	^ 'C:\Users\h.houekpetodji\Documents\EspaceDeTravail\Automation\modules' asFileReference
 ]
 
 { #category : #accessing }
