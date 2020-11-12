@@ -19,6 +19,13 @@ PBLRegenerator class >> runOn: aPathToPowerbuilderProjectTargetString [
 		runOcascript
 ]
 
+{ #category : #'as yet unclassified' }
+PBLRegenerator >> cleanUpPBg [
+	self powerbuilderProjetDirectory files
+		select: [ :file | file extension = 'pbg' ]
+		thenDo: #delete
+]
+
 { #category : #api }
 PBLRegenerator >> ensureCreateOrcascriptFile [
 	| file |
@@ -30,9 +37,8 @@ PBLRegenerator >> ensureCreateOrcascriptFile [
 
 { #category : #'as yet unclassified' }
 PBLRegenerator >> ensurePBGFilesAreWellSet [
-	(self powerbuilderProjetDirectory files
-		select: [ :file | file extension = 'pbg' ])
-		ifEmpty: [ PBGRefactor runOn: self powerbuilderProjetDirectory ]
+self cleanUpPBg .
+PBGRefactor runOn: self powerbuilderProjetDirectory 
 ]
 
 { #category : #initialization }
@@ -48,19 +54,18 @@ PBLRegenerator >> logFilePath [
 
 { #category : #api }
 PBLRegenerator >> orcascript [
-	^ 'start session
-set debug true
-scc set connect property logfile "' , self logFilePath pathString
+	^ 'start session',String lf,
+'set debug true' ,String lf,
+'scc set connect property logfile "' , self logFilePath pathString
 		,
-			'"
-scc connect offline
-scc set target "' , pathToTarget pathString
+			'"',String lf,
+'scc connect offline',String lf,
+'scc set target "' , pathToTarget pathString
 		,
-			'" importonly
-scc refresh target 3pass
-scc close
-end session
-'
+			'" importonly',String lf,
+'scc refresh target 3pass',String lf,
+'scc close',String lf,
+'end session'
 ]
 
 { #category : #accessing }
@@ -86,7 +91,10 @@ PBLRegenerator >> runOcascript [
 	command := self runner , String space
 		, self ensureCreateOrcascriptFile pathString.
 	LibC runCommand: command.
-	^ self logFilePath contents
+	self cleanUpPBg.
+	^ self logFilePath
+		readStreamEncoded: 'utf16le'
+		do: [ :stream | ^ stream contents ]
 ]
 
 { #category : #'as yet unclassified' }
