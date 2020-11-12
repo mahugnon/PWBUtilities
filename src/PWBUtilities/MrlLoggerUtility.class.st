@@ -32,7 +32,8 @@ MrlLoggerUtility class >> uniqueInstance [
 { #category : #running }
 MrlLoggerUtility >> createModules [
 	| moduleCreator |
-	self pathToModules deleteAll.
+	self pathToModules exists
+		ifTrue: [ self pathToModules deleteAll ].
 	moduleCreator := CIMIzyFilesNavigatorModel new.
 	moduleCreator izyProtectRootFolder: self izySourceCode.
 	moduleCreator moduleFolder: self pathToModules
