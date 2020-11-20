@@ -54,17 +54,17 @@ MrlLoggerUtility >> inserLogForPrestation [
 		install.
 	(MrlObjectsLogsCreator loggerWithoutAccessForModel: famixModel)
 		addConstraint:
-			(MrlLogsCreatorSkipBigFunctionConstraint new
+			(PWBLogsCreatorSkipBigFunctionConstraint new
 				name: 'uo_traitement_liq_cal';
 				constraint: {'uf_calcul_plafond' . 'uf_calcul_exp_limite_suite'};
 				yourself);
 		addConstraint:
-			(MrlLogsCreatorMaxNumberOfLogsConstraint new
+			(PWBLogsCreatorMaxNumberOfLogsConstraint new
 				name: 'uo_traitement_liq_cal';
 				constraint: 207;
 				yourself);
 		addConstraint:
-			(MrlLogsCreatorSkipBigFunctionConstraint new
+			(PWBLogsCreatorSkipBigFunctionConstraint new
 				name: 'uo_traitement_ech_maj';
 				constraint: {'uf_rech_prem_ech'};
 				yourself);
