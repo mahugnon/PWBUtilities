@@ -13,6 +13,7 @@ Class {
 
 { #category : #running }
 MrlLoggerUtility class >> reset [
+<script>
 uniqueInstance := nil
 ]
 
@@ -104,6 +105,6 @@ MrlLoggerUtility >> pathToTarget: anObject [
 { #category : #running }
 MrlLoggerUtility >> run [
 	self inserMrlLogsScriptsInPowerbuilderProject.
-	PBLRegenerator runOn: self powerbuilderProjetDirectory.
-	PWBBuilder runOn: self powerbuilderProjetDirectory
+	PBLRegenerator runOn: self pathToTarget.
+	PWBBuilder runOn: self pathToTarget
 ]
