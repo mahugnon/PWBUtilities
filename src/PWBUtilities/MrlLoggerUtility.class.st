@@ -52,7 +52,7 @@ MrlLoggerUtility >> inserLogForPrestation [
 		importFromFolder: self pathToModules / 'Prestation')
 		name: 'Prestation';
 		install.
-	(MrlObjectsLogsCreator loggerWithoutAccessForModel: famixModel)
+	(PWBObjectGroupLogsCreator loggerWithoutAccessForModel: famixModel)
 		addConstraint:
 			(PWBLogsCreatorSkipBigFunctionConstraint new
 				name: 'uo_traitement_liq_cal';
