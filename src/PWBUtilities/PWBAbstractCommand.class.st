@@ -15,6 +15,16 @@ PWBAbstractCommand class >> runOn: aPathToPowerbuilderProjectTargetString [
 		run
 ]
 
+{ #category : #'as yet unclassified' }
+PWBAbstractCommand class >> updateData: aBuilder [
+	<worldMenu>
+	(aBuilder item: #PWBTools)
+		order: 10;
+		help: 'Powerbuilder tools';
+		label: 'PWBTools'
+	
+]
+
 { #category : #accessing }
 PWBAbstractCommand >> errorsLogFilePath [
 self subclassResponsibility 
