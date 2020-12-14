@@ -44,6 +44,16 @@ CIMIzyFilesNavigator class >> runMe [
 	^ self new openWithSpec
 ]
 
+{ #category : #'as yet unclassified' }
+CIMIzyFilesNavigator class >> updateData: aBuilder [
+	<worldMenu>
+	(aBuilder item: #CreateModules)
+		parent: #PWBTools;
+		help: 'Create Izy Protect business modules from source code';
+		label: 'Create modules';
+		action: [ self runMe ]
+]
+
 { #category : #initialization }
 CIMIzyFilesNavigator >> connectPresenters [
 	rootFolder
