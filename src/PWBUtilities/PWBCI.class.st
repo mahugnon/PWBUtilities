@@ -115,7 +115,7 @@ PWBCI >> runUnitTests [
 { #category : #'as yet unclassified' }
 PWBCI >> svnCheckout [
 
-	LibC runCommand: 'svn checkout ' , self repoUrl , String space
+	LibC runCommand: 'start svn checkout ' , self repoUrl , String space
 		, self repoLocalPath pathString
 ]
 

@@ -13,8 +13,8 @@ PBUnitTestsRunner >> run [
 	| exe command |
 	exe := self pathToTarget pathString
 		       copyReplaceAll: self pathToTarget extension
-		       with: '.exe'.
-	command := exe , ' NOM_BAS=' , self testDatabase
+		       with: 'exe'.
+	command := 'start ' , exe , ' NOM_BAS=' , self testDatabase
 	           , ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;'.
 	LibC runCommand: command
 ]
