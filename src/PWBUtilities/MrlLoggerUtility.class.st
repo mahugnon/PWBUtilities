@@ -8,7 +8,7 @@ Class {
 	#classVars : [
 		'uniqueInstance'
 	],
-	#category : #'PWBUtilities-PBLRegenerator'
+	#category : #'PWBUtilities-PWBCommands'
 }
 
 { #category : #running }

@@ -5,7 +5,7 @@ Class {
 		'pathToTarget',
 		'runner'
 	],
-	#category : #'PWBUtilities-PBLRegenerator'
+	#category : #'PWBUtilities-PWBCommands'
 }
 
 { #category : #running }

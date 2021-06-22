@@ -6,7 +6,7 @@ Class {
 		'repoLocal',
 		'targetName'
 	],
-	#category : #PWBUtilities
+	#category : #'PWBUtilities-Core'
 }
 
 { #category : #accessing }
@@ -32,6 +32,16 @@ PWBCI >> initialize [
 	super initialize.
 	repoLocal := 'C:\Users\h.houekpetodji\Documents\EspaceDeTravail\Local_repository'
 		             asFileReference
+]
+
+{ #category : #accessing }
+PWBCI >> job [
+
+	[ 
+	[ true ] whileTrue: [ 
+		self run.
+		(Duration days: 1) asDelay wait ] ] forkNamed:
+		self repoName , '_TestRunner'
 ]
 
 { #category : #'as yet unclassified' }
@@ -106,7 +116,7 @@ PWBCI >> run [
 { #category : #running }
 PWBCI >> runUnitTests [
 
-	PBUnitTestsRunner new
+	PBLUnitTestsRunner new
 		testDatabase: 'CIM125';
 		pathToTarget: self pathToTarget;
 		run
@@ -115,7 +125,7 @@ PWBCI >> runUnitTests [
 { #category : #'as yet unclassified' }
 PWBCI >> svnCheckout [
 
-	LibC runCommand: 'start svn checkout ' , self repoUrl , String space
+	LibC resultOfCommand: 'start svn checkout ' , self repoUrl , String space
 		, self repoLocalPath pathString
 ]
 

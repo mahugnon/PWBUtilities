@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'pbProjectDirectory'
 	],
-	#category : #'PWBUtilities-PBLRegenerator'
+	#category : #'PWBUtilities-PWBCommands'
 }
 
 { #category : #running }

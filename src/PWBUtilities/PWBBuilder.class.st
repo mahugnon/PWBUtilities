@@ -4,7 +4,7 @@ I am a tool to build a powerbuilder project. My runner pbc
 Class {
 	#name : #PWBBuilder,
 	#superclass : #PWBAbstractCommand,
-	#category : #'PWBUtilities-PBLRegenerator'
+	#category : #'PWBUtilities-PWBCommands'
 }
 
 { #category : #api }

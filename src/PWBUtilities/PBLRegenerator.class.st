@@ -5,7 +5,7 @@ I suppose that orcascript 17 is installed. If not you should change the  orcascr
 Class {
 	#name : #PBLRegenerator,
 	#superclass : #PWBAbstractCommand,
-	#category : #'PWBUtilities-PBLRegenerator'
+	#category : #'PWBUtilities-PWBCommands'
 }
 
 { #category : #api }
