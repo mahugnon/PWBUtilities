@@ -4,7 +4,9 @@ Class {
 	#instVars : [
 		'repoUrl',
 		'repoLocal',
-		'targetName'
+		'targetName',
+		'commitMessage',
+		'svnHeadAuthor'
 	],
 	#category : #'PWBUtilities-Core'
 }
@@ -26,12 +28,38 @@ PWBCI class >> repoUrl: aRepoStringUrl targetName: aTargetName [
 		run
 ]
 
+{ #category : #accessing }
+PWBCI >> getSvnInfo [
+
+	| info |
+	info := [ 
+	        (XMLDOMParser parse:
+		         (LibC resultOfCommand:
+			          'svn log ' , repoUrl , ' --limit 1 --xml')) document 
+		        descendantElementsDetect: [ :xmlElt | xmlElt name = 'log' ] ]
+		        on: XMLParserException
+		        do: [  ].
+	info ifNil: [ ^ self ].
+	commitMessage := (info firstElement attributeNodeAt: 'message') value
+		                 trim.
+	svnHeadAuthor := (info firstElement descendantElementsDetect: [ 
+		                  :xmlElt | xmlElt name = 'author' ]) nodes anyOne
+		                 asString
+]
+
 { #category : #initialization }
 PWBCI >> initialize [
 
 	super initialize.
 	repoLocal := 'C:\Users\h.houekpetodji\Documents\EspaceDeTravail\Local_repository'
 		             asFileReference
+]
+
+{ #category : #running }
+PWBCI >> isPBLCommit [
+
+	^ (commitMessage copyReplaceAll: String space with: '')
+	  = '00000:commitpbl'
 ]
 
 { #category : #accessing }
@@ -106,18 +134,30 @@ PWBCI >> repoUrl: anObject [
 ]
 
 { #category : #running }
+PWBCI >> reportTestResult [
+
+	PWBTestRepport new
+		pathToTarget: self pathToTarget;
+		author: svnHeadAuthor;
+		run
+]
+
+{ #category : #running }
 PWBCI >> run [
 
+	self getSvnInfo.
+"	self isPBLCommit ifFalse: [ ^ self ]."
 	self loadLastChanges.
 	self refreshPBLs.
-	self runUnitTests
+	self runUnitTests.
+	self reportTestResult
 ]
 
 { #category : #running }
 PWBCI >> runUnitTests [
 
-	PBLUnitTestsRunner new
-		testDatabase: 'CIM125';
+	PWBUnitTestsRunner new
+		testDatabase: 'CIM999NC';
 		pathToTarget: self pathToTarget;
 		run
 ]
