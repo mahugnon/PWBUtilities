@@ -30,21 +30,17 @@ PWBCI class >> repoUrl: aRepoStringUrl targetName: aTargetName [
 
 { #category : #accessing }
 PWBCI >> getSvnInfo [
-
 	| info |
-	info := [ 
-	        (XMLDOMParser parse:
-		         (LibC resultOfCommand:
-			          'svn log ' , repoUrl , ' --limit 1 --xml')) document 
-		        descendantElementsDetect: [ :xmlElt | xmlElt name = 'log' ] ]
-		        on: XMLParserException
-		        do: [  ].
+	info := (XMLDOMParser
+		parse: (LibC resultOfCommand: 'svn log ' , repoUrl , ' --limit 1 --xml'))
+		document.
 	info ifNil: [ ^ self ].
-	commitMessage := (info firstElement attributeNodeAt: 'message') value
-		                 trim.
-	svnHeadAuthor := (info firstElement descendantElementsDetect: [ 
-		                  :xmlElt | xmlElt name = 'author' ]) nodes anyOne
-		                 asString
+	commitMessage := (info
+		descendantElementsDetect: [ :xmlElt | xmlElt name = 'msg' ]) nodes
+		anyOne value.
+	svnHeadAuthor := (info firstElement
+		descendantElementsDetect: [ :xmlElt | xmlElt name = 'author' ])
+		nodes anyOne asString
 ]
 
 { #category : #initialization }

@@ -66,13 +66,13 @@ PWBTestRepport >> run [
 
 	| xmlResult |
 	[ 
-	(Duration minutes: 1) asDelay wait.
+	(Duration minutes: 2) asDelay wait.
 	xmlResult := XMLDOMParser parse:
 		             self transformReportToJunitFormat asFileReference
 			             contents.
 	numberOfFailures := (xmlResult nodes anyOne attributeNodeAt:
 		                     'failures') value asInteger.
-	numberOfFailures > 0 ifTrue: [ self sendNotification ] ] forkNamed:
+	numberOfFailures > 0 ifTrue: [ self sendMailMessageToCommitAuthor ] ] forkNamed:
 		'TestReport'
 ]
 
@@ -85,7 +85,16 @@ PWBTestRepport >> sendMailMessageToCommitAuthor [
 		subject: 'Rapport de test PBUnit';
 		to: self recipientList;
 		addAlternativePart: self message contentType: 'text/html';
-		addAttachmentFrom: self pathToJunitXMLStyle asFileReference  withName: 'junit-report' .
+		addAttachmentFrom: self pathToPBUnitReportFile readStream
+			withName: self pathToPBUnitReportFile basename.
+	"self pathToPBUnitReportFile
+		writeStreamDo: [ :stream | 
+			stream binary.
+			mailMessage
+				addAttachmentFrom: stream
+					withName: self pathToPBUnitReportFile basename;
+				text;
+				yourself ]."
 	ZdcSecureSMTPClient
 		sendPWBCriticsUsingGMailAccountPassword: '8v$oPDA0cA'
 		to: self recipientList
