@@ -10,7 +10,16 @@ BaselineOfPWBUtilities >> baseline: spec [
 	spec
 		for: #common
 		do: [ self baselineOfXMLParser: spec.
+			self baselineOfPowerbuilderParser: spec.
 			spec package: 'PWBUtilities' ]
+]
+
+{ #category : #baselines }
+BaselineOfPWBUtilities >> baselineOfPowerbuilderParser: spec [
+	spec
+		baseline: 'PowerbuilderParser'
+		with: [ spec
+				repository: 'github://mahugnon/PowerbuilderParser:changesFromSvn/src' ]
 ]
 
 { #category : #baselines }

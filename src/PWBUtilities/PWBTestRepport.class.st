@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'testDatabase',
 		'author',
-		'numberOfFailures'
+		'numberOfFailures',
+		'pathToJunitReportFile'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -51,67 +52,36 @@ PWBTestRepport >> pathToSaxonTransformer [
 ]
 
 { #category : #running }
-PWBTestRepport >> recipientList [
-
-	| recipientList authorMail |
-	"authorMail := author  , '@sa-cim.fr'."
-	recipientList := { 'MahugnonHonore.Houekpetodji@sa-cim.fr'.
-	                 'homahugnon@gmail.com' }. "'Jerome.Sudich@sa-cim.fr'.
-	                 'fatiha.Djareddir@sa-cim.fr'."
-	^ recipientList
+PWBTestRepport >> report [
+	PWBPublisher new
+		attachment: pathToJunitReportFile asFileReference;
+		author: self author;
+		text: self message;
+		run
 ]
 
 { #category : #running }
 PWBTestRepport >> run [
-
 	| xmlResult |
-	[ 
-	(Duration minutes: 2) asDelay wait.
-	xmlResult := XMLDOMParser parse:
-		             self transformReportToJunitFormat asFileReference
-			             contents.
-	numberOfFailures := (xmlResult nodes anyOne attributeNodeAt:
-		                     'failures') value asInteger.
-	numberOfFailures > 0 ifTrue: [ self sendMailMessageToCommitAuthor ] ] forkNamed:
-		'TestReport'
-]
-
-{ #category : #running }
-PWBTestRepport >> sendMailMessageToCommitAuthor [
-	| mailMessage |
-	mailMessage := MailMessage empty
-		from: 'pwbcritics@gmail.com';
-		date: DateAndTime now asEmailString;
-		subject: 'Rapport de test PBUnit';
-		to: self recipientList;
-		addAlternativePart: self message contentType: 'text/html';
-		addAttachmentFrom: self pathToPBUnitReportFile readStream
-			withName: self pathToPBUnitReportFile basename.
-	"self pathToPBUnitReportFile
-		writeStreamDo: [ :stream | 
-			stream binary.
-			mailMessage
-				addAttachmentFrom: stream
-					withName: self pathToPBUnitReportFile basename;
-				text;
-				yourself ]."
-	ZdcSecureSMTPClient
-		sendPWBCriticsUsingGMailAccountPassword: '8v$oPDA0cA'
-		to: self recipientList
-		message: mailMessage
+	[ (Duration minutes: 2) asDelay wait.
+	xmlResult := XMLDOMParser
+		parse:
+			self transformReportToJunitFormat asFileReference contents.
+	numberOfFailures := (xmlResult nodes anyOne
+		attributeNodeAt: 'failures') value asInteger.
+	numberOfFailures > 0
+		ifTrue: [ self report ] ] forkNamed: 'TestReport'
 ]
 
 { #category : #running }
 PWBTestRepport >> transformReportToJunitFormat [
-
-	| command junitReport |
-	junitReport := self pathToPBUnitReportFile pathString
-		               copyReplaceAll:
-		               self pathToPBUnitReportFile basenameWithoutExtension
-		               with: 'junit-report'.
+	| command |
+	pathToJunitReportFile := self pathToPBUnitReportFile pathString
+		copyReplaceAll: self pathToPBUnitReportFile basenameWithoutExtension
+		with: 'junit-report'.
 	command := 'java -jar ' , self pathToSaxonTransformer , ' -s:'
-	           , self pathToPBUnitReportFile pathString
-	           , self pathToJunitXMLStyle , ' -o:' , junitReport.
+		, self pathToPBUnitReportFile pathString , self pathToJunitXMLStyle
+		, ' -o:' , pathToJunitReportFile.
 	LibC runCommand: command.
-	^ junitReport
+	^ pathToJunitReportFile
 ]

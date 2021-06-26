@@ -1,0 +1,97 @@
+Class {
+	#name : #PWBPublisher,
+	#superclass : #PWBAbstractCommand,
+	#instVars : [
+		'text',
+		'attachment',
+		'author',
+		'recipientList'
+	],
+	#category : #'PWBUtilities-PWBCommands'
+}
+
+{ #category : #accessing }
+PWBPublisher >> attachment [
+	^ attachment
+]
+
+{ #category : #accessing }
+PWBPublisher >> attachment: anObject [
+	attachment := anObject
+]
+
+{ #category : #accessing }
+PWBPublisher >> author [
+	^ author
+]
+
+{ #category : #accessing }
+PWBPublisher >> author: anObject [
+	author := anObject
+]
+
+{ #category : #accessing }
+PWBPublisher >> errorsLogFilePath [
+
+]
+
+{ #category : #running }
+PWBPublisher >> hasAttachment [
+	^ attachment isNotNil
+]
+
+{ #category : #initialization }
+PWBPublisher >> initialize [
+	super initialize.
+	recipientList := self testRecipientList
+]
+
+{ #category : #running }
+PWBPublisher >> recipientList [
+	^ recipientList
+]
+
+{ #category : #running }
+PWBPublisher >> recipientList: aColllection [
+	recipientList := aColllection
+]
+
+{ #category : #running }
+PWBPublisher >> run [
+	self sendMailMessageToCommitAuthor
+]
+
+{ #category : #running }
+PWBPublisher >> sendMailMessageToCommitAuthor [
+	| mailMessage |
+	mailMessage := MailMessage empty
+		from: 'pwbcritics@gmail.com';
+		date: DateAndTime now asEmailString;
+		subject: 'Rapport de test PBUnit';
+		to: self recipientList;
+		addAlternativePart: text contentType: 'text/html'.
+	self hasAttachment
+		ifTrue: [ mailMessage
+				addAttachmentFrom: attachment readStream
+				withName: attachment basename ].
+	ZdcSecureSMTPClient
+		sendPWBCriticsUsingGMailAccountPassword: '8v$oPDA0cA'
+		to: self recipientList
+		message: mailMessage
+]
+
+{ #category : #tests }
+PWBPublisher >> testRecipientList [
+	^ {'MahugnonHonore.Houekpetodji@sa-cim.fr'.
+	'homahugnon@gmail.com'}
+]
+
+{ #category : #accessing }
+PWBPublisher >> text [
+	^ text
+]
+
+{ #category : #accessing }
+PWBPublisher >> text: anObject [
+	text := anObject
+]
