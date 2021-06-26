@@ -8,7 +8,9 @@ Class {
 		'svnPrevAuthor',
 		'repoUrlTextInput',
 		'svnPrev',
-		'model'
+		'model',
+		'okButton',
+		'targetNameTextInput'
 	],
 	#category : #'PWBUtilities-Core'
 }
@@ -17,6 +19,12 @@ Class {
 PWBCIUI class >> defaultSpec [
 	^ SpBoxLayout newVertical
 		add: #repoUrlTextInput;
+		add: #targetNameTextInput;
+		add: #okButton
+			withConstraints: [ :constraints | 
+			constraints
+				height: self toolbarHeight;
+				width: self buttonWidth  ];
 		yourself
 ]
 
@@ -52,14 +60,20 @@ PWBCIUI >> initialize [
 { #category : #initialization }
 PWBCIUI >> initializePresenters [
 	repoUrlTextInput := self instantiate: SpLabelledTextInput.
-	repoUrlTextInput acceptOnCR: true.
-	repoUrlTextInput
-		label: 'SVN repository URL:';
-		whenTextIsAccepted: [ model repoUrl: repoUrlTextInput text.
-			model isValidRepoUrl
+	repoUrlTextInput label: 'SVN repository URL*:';
+	placeholder: 'https://svn.example.com/repos/MyRepo/MyProject/trunk'.
+	targetNameTextInput := self instantiate: SpLabelledTextInput.
+	targetNameTextInput
+		label: 'Target name*:';
+		placeholder: 'abc.pbt'.
+	okButton := self newButton.
+	okButton label: 'OK'.
+	okButton
+		action: [ model repoUrl: repoUrlTextInput text.
+			model targetName: targetNameTextInput text.
+			self isFieldsValid
 				ifTrue: [ self window close.
-					model run ]
-				ifFalse: [ repoUrlTextInput subwidget color: Color red ] ]
+					model run ] ]
 ]
 
 { #category : #initialization }
@@ -67,5 +81,18 @@ PWBCIUI >> initializeWindow: aWindowPresenter [
 
 	aWindowPresenter 
 		title: 'PWB Violation Manager';
-		initialExtent: 500@100
+		initialExtent: 500@150
+]
+
+{ #category : #initialization }
+PWBCIUI >> isFieldsValid [
+	| valid |
+	valid := true.
+	model isValidRepoUrl
+		ifFalse: [ repoUrlTextInput subwidget color: Color red.
+			valid := false ].
+	model isValidTargetName
+		ifFalse: [ targetNameTextInput subwidget color: Color red.
+			valid := false ].
+	^ valid
 ]

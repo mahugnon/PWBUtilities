@@ -132,6 +132,11 @@ PWBCIModel >> isValidRepoUrl [
 	^ repoUrl beginsWith: 'https://'
 ]
 
+{ #category : #testing }
+PWBCIModel >> isValidTargetName [
+	^ targetName endsWith: '.pbt'
+]
+
 { #category : #accessing }
 PWBCIModel >> job [
 
