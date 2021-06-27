@@ -63,10 +63,11 @@ PWBTestRepport >> report [
 { #category : #running }
 PWBTestRepport >> run [
 	| xmlResult |
-	[ (Duration minutes: 2) asDelay wait.
+	[ self wait.
+	self transformReportToJunitFormat asFileReference exists
+		ifFalse: [ self wait ].
 	xmlResult := XMLDOMParser
-		parse:
-			self transformReportToJunitFormat asFileReference contents.
+		parse: self transformReportToJunitFormat asFileReference contents.
 	numberOfFailures := (xmlResult nodes anyOne
 		attributeNodeAt: 'failures') value asInteger.
 	numberOfFailures > 0
@@ -84,4 +85,9 @@ PWBTestRepport >> transformReportToJunitFormat [
 		, ' -o:' , pathToJunitReportFile.
 	LibC runCommand: command.
 	^ pathToJunitReportFile
+]
+
+{ #category : #waiting }
+PWBTestRepport >> wait [ 
+(Duration minutes: 2) asDelay wait.
 ]
