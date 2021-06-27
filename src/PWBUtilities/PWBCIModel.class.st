@@ -224,9 +224,9 @@ PWBCIModel >> run [
 		whileTrue: [ lastHead := svnHead.
 			self getSvnInfo.
 			svnHead = lastHead
-				ifFalse: [ self runViolations ].
-			self runUnitTests.
-			(Duration minutes: 5) asDelay wait ] ]
+				ifFalse: [ self runViolations.
+					self runUnitTests.
+					(Duration minutes: 5) asDelay wait ] ] ]
 		forkNamed: 'PWBCI_' , self repoName
 ]
 
