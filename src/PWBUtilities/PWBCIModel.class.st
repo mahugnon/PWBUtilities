@@ -3,7 +3,6 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'repoUrl',
-		'repoLocal',
 		'targetName',
 		'commitMessage',
 		'svnHeadAuthor',
@@ -11,8 +10,27 @@ Class {
 		'svnPrev',
 		'svnPrevAuthor'
 	],
+	#classInstVars : [
+		'repoLocal'
+	],
 	#category : #'PWBUtilities-Core'
 }
+
+{ #category : #'class initialization' }
+PWBCIModel class >> initialize [
+	repoLocal := 'C:\Users\h.houekpetodji\Documents\EspaceDeTravail\Local_repository'
+		asFileReference
+]
+
+{ #category : #accessing }
+PWBCIModel class >> repoLocal [
+	^ repoLocal
+]
+
+{ #category : #accessing }
+PWBCIModel class >> repoLocal: anObject [
+	anObject ifNil: [ repoLocal := anObject ]
+]
 
 { #category : #accessing }
 PWBCIModel class >> repoUrl: aString [
@@ -115,8 +133,6 @@ PWBCIModel >> getSvnInfo [
 { #category : #initialization }
 PWBCIModel >> initialize [
 	super initialize.
-	repoLocal := 'C:\Users\h.houekpetodji\Documents\EspaceDeTravail\Local_repository'
-		asFileReference.
 	repoUrl := 'https://CIM-SVN.SA-CIM.local/svn/TestCI/'
 ]
 
@@ -169,14 +185,7 @@ PWBCIModel >> refreshPBLs [
 
 { #category : #accessing }
 PWBCIModel >> repoLocal [
-
-	^ repoLocal
-]
-
-{ #category : #accessing }
-PWBCIModel >> repoLocal: anObject [
-
-	repoLocal := anObject
+	^ self class repoLocal
 ]
 
 { #category : #'as yet unclassified' }
@@ -225,8 +234,8 @@ PWBCIModel >> run [
 			self getSvnInfo.
 			svnHead = lastHead
 				ifFalse: [ self runViolations.
-					self runUnitTests.
-					(Duration minutes: 5) asDelay wait ] ] ]
+					self runUnitTests ].
+			(Duration minutes: 5) asDelay wait ] ]
 		forkNamed: 'PWBCI_' , self repoName
 ]
 
