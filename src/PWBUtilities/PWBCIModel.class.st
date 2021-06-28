@@ -138,9 +138,7 @@ PWBCIModel >> initialize [
 
 { #category : #running }
 PWBCIModel >> isPBLCommit [
-
-	^ (commitMessage copyReplaceAll: String space with: '')
-	  = '00000:commitpbl'
+	^ commitMessage trim includes: 'pbl'
 ]
 
 { #category : #initialization }

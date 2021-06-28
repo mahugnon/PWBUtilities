@@ -114,7 +114,8 @@ PWBCIUI >> initializeTargetNameTextInput [
 PWBCIUI >> initializeWindow: aWindowPresenter [
 	aWindowPresenter
 		title: 'PWB CI Launcher';
-		initialExtent: 500 @ 200
+		initialExtent: 500 @ 200;
+		iconNamed: #ciIcon
 ]
 
 { #category : #initialization }
