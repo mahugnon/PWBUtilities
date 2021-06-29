@@ -238,8 +238,7 @@ PWBCIModel >> reportTestResult [
 PWBCIModel >> run [
 	| lastHead |
 	[ [ true ]
-		whileTrue: [ self halt.
-			lastHead := svnHead.
+		whileTrue: [ lastHead := svnHead.
 			self getSvnInfo.
 			svnHead = lastHead
 				ifFalse: [ self runViolations.
