@@ -81,8 +81,7 @@ PWBCIUI >> initializeLocalDirectoryTextInput [
 			[ localDirectoryTextInput input text: model localDirectory pathString ].
 	selectDirectoryButton := self newButton
 		label: '...';
-		action: [ self halt.
-			model
+		action: [ model
 				localDirectory: (UITheme builder chooseDirectory: 'Select a directory').
 			self update ]
 ]
