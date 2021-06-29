@@ -64,28 +64,39 @@ PWBCIUI class >> updateData: aBuilder [
 
 { #category : #initialization }
 PWBCIUI >> initialize [
-	super initialize.
-	model := PWBCIModel new
+	super initialize
 ]
 
 { #category : #initialization }
 PWBCIUI >> initializeLocalDirectoryTextInput [
-	localDirectoryTextInput := self instantiate: SpLabelledTextInput.
-	localDirectoryTextInput label: 'Local directory :'.
+	localDirectoryTextInput := self
+		instantiate:
+			(SpLabelledPresenter
+				label: 'Local directory :'
+				input: self newTextInput).
+	model localDirectory
+		ifNil: [ localDirectoryTextInput input
+				placeholder: 'C:\Users\CIMColaborator\Documents\EspaceDeTravail\Local_repository' ]
+		ifNotNil:
+			[ localDirectoryTextInput input text: model localDirectory pathString ].
 	selectDirectoryButton := self newButton
 		label: '...';
-		action: [ PWBCIModel
-				repoLocal: (UITheme builder chooseDirectory: 'Select a directory') ]
+		action: [ self halt.
+			model
+				localDirectory: (UITheme builder chooseDirectory: 'Select a directory').
+			self update ]
 ]
 
 { #category : #initialization }
 PWBCIUI >> initializePresenters [
+	model := PWBCIModel new.
 	self initializeRepoUrlTextInput.
 	self initializeTargetNameTextInput.
 	self initializeLocalDirectoryTextInput.
 	okButton := self newButton.
-	okButton label: 'OK';
-	iconName: #smallOk .
+	okButton
+		label: 'OK';
+		iconName: #smallOk.
 	okButton
 		action: [ model repoUrl: repoUrlTextInput input text.
 			model targetName: targetNameTextInput input text.
@@ -114,7 +125,7 @@ PWBCIUI >> initializeTargetNameTextInput [
 PWBCIUI >> initializeWindow: aWindowPresenter [
 	aWindowPresenter
 		title: 'PWB CI Launcher';
-		initialExtent: 500 @ 200;
+		initialExtent: 600 @ 230;
 		iconNamed: #ciIcon
 ]
 
@@ -125,6 +136,20 @@ PWBCIUI >> isFieldsValid [
 	valid := self isValidRepoUrl.
 	valid := self isValidTargetName.
 	self update.
+	^ valid
+]
+
+{ #category : #initialization }
+PWBCIUI >> isValidLocalDirectory [
+	| valid |
+	valid := true.
+	model isValidLocalDirectory
+		ifTrue:
+			[ localDirectoryTextInput descriptionPresenter: self newNullPresenter ]
+		ifFalse: [ localDirectoryTextInput
+				description: 'The local repository should be set'.
+			localDirectoryTextInput descriptionPresenter color: Color red.
+			valid := false ].
 	^ valid
 ]
 

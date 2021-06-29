@@ -11,25 +11,25 @@ Class {
 		'svnPrevAuthor'
 	],
 	#classInstVars : [
-		'repoLocal'
+		'localDirectory'
 	],
 	#category : #'PWBUtilities-Core'
 }
 
 { #category : #'class initialization' }
 PWBCIModel class >> initialize [
-	repoLocal := 'C:\Users\h.houekpetodji\Documents\EspaceDeTravail\Local_repository'
+	localDirectory := 'C:\Users\h.houekpetodji\Documents\EspaceDeTravail\Local_repository'
 		asFileReference
 ]
 
 { #category : #accessing }
-PWBCIModel class >> repoLocal [
-	^ repoLocal
+PWBCIModel class >> localDirectory [
+	^ localDirectory
 ]
 
 { #category : #accessing }
-PWBCIModel class >> repoLocal: anObject [
-	anObject ifNil: [ repoLocal := anObject ]
+PWBCIModel class >> localDirectory: anObject [
+	anObject ifNotNil: [ localDirectory := anObject ]
 ]
 
 { #category : #accessing }
@@ -138,7 +138,12 @@ PWBCIModel >> initialize [
 
 { #category : #running }
 PWBCIModel >> isPBLCommit [
-	^ commitMessage trim includes: 'pbl'
+	^ commitMessage trim includesSubstring: 'pbl'
+]
+
+{ #category : #testing }
+PWBCIModel >> isValidLocalDirectory [
+	^ self localDirectory isNil
 ]
 
 { #category : #initialization }
@@ -169,6 +174,16 @@ PWBCIModel >> loadLastChanges [
 		ifFalse: [ self svnCheckout ]
 ]
 
+{ #category : #accessing }
+PWBCIModel >> localDirectory [
+	^ self class localDirectory
+]
+
+{ #category : #accessing }
+PWBCIModel >> localDirectory: anObject [
+	self class localDirectory: anObject
+]
+
 { #category : #running }
 PWBCIModel >> pathToTarget [
 
@@ -181,16 +196,11 @@ PWBCIModel >> refreshPBLs [
 	PBLRegenerator runOn: self pathToTarget
 ]
 
-{ #category : #accessing }
-PWBCIModel >> repoLocal [
-	^ self class repoLocal
-]
-
 { #category : #'as yet unclassified' }
 PWBCIModel >> repoLocalPath [
 
 	| path |
-	path := self repoLocal / self repoName.
+	path := self localDirectory / self repoName.
 	path exists ifFalse: [ path ensureCreateDirectory ].
 	^ path
 ]
@@ -228,7 +238,8 @@ PWBCIModel >> reportTestResult [
 PWBCIModel >> run [
 	| lastHead |
 	[ [ true ]
-		whileTrue: [ lastHead := svnHead.
+		whileTrue: [ self halt.
+			lastHead := svnHead.
 			self getSvnInfo.
 			svnHead = lastHead
 				ifFalse: [ self runViolations.
