@@ -19,7 +19,7 @@ BaselineOfPWBUtilities >> baselineOfPowerbuilderParser: spec [
 	spec
 		baseline: 'PowerbuilderParser'
 		with: [ spec
-				repository: 'github://mahugnon/PowerbuilderParser:changesFromSvn/src' ]
+				repository: 'github://mahugnon/PowerbuilderParser:changesFromSvn' ]
 ]
 
 { #category : #baselines }
