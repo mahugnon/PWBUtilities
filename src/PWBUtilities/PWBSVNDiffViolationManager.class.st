@@ -17,6 +17,11 @@ PWBSVNDiffViolationManager class >> prev: aPrevViolations head: aHeadViolations 
 	^ self new prev: aPrevViolations head: aHeadViolations
 ]
 
+{ #category : #accessing }
+PWBSVNDiffViolationManager >> author: aString [ 
+	author := aString
+]
+
 { #category : #'as yet unclassified' }
 PWBSVNDiffViolationManager >> diffBetween: aCollection1 and: aCollection2 [
 	^ aCollection1
@@ -79,6 +84,15 @@ PWBSVNDiffViolationManager >> prepareEncouragmentReport: aCollection with: anInt
 ]
 
 { #category : #'as yet unclassified' }
+PWBSVNDiffViolationManager >> prepareReport: aCollection [
+	stream
+		<< '<p>';
+		<< self violationContext.
+	aCollection do: [ :violation | violation reportOn: stream ].
+	stream << '</ul></p>'
+]
+
+{ #category : #'as yet unclassified' }
 PWBSVNDiffViolationManager >> prepareViolationReport: aCollection [
 	stream
 		<< '<p>';
@@ -135,6 +149,15 @@ PWBSVNDiffViolationManager >> repoName [
 { #category : #accessing }
 PWBSVNDiffViolationManager >> repoName: aString [
 	repoName := aString
+]
+
+{ #category : #running }
+PWBSVNDiffViolationManager >> reportViolation: violations [
+	self prepareReport: violations.
+	LibC
+		resultOfCommand:
+			'powershell -file "sendMail.ps1" "' , self stream , '" "' , author
+				, '@sa-cim.fr"'
 ]
 
 { #category : #'as yet unclassified' }
