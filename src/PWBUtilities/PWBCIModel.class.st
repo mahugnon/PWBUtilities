@@ -50,6 +50,18 @@ PWBCIModel class >> repoUrl: aRepoStringUrl targetName: aTargetName [
 ]
 
 { #category : #'as yet unclassified' }
+PWBCIModel class >> runTestsExample [
+	<script>
+	self halt.
+	PWBUnitTestsRunner new
+		testDatabase: 'CIM999NC';
+		pathToTarget:
+			'C:\Users\h.houekpetodji\Documents\EspaceDeTravail\Local_repository\developpement\cwm.exe'
+				asFileReference;
+		run
+]
+
+{ #category : #'as yet unclassified' }
 PWBCIModel >> cleanUp [
 	(FileSystem workingDirectory / ('svnPrev' , self repoName))
 		ensureDeleteAll.
