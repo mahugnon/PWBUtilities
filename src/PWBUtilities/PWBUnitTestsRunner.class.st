@@ -7,6 +7,12 @@ Class {
 	#category : #'PWBUtilities-PWBCommands'
 }
 
+{ #category : #cleaning }
+PWBUnitTestsRunner >> clean [
+	(self pathToTarget parent / 'pbunit-results.xml') ensureDelete.
+	(self pathToTarget parent / 'junit-report.xml') ensureDelete
+]
+
 { #category : #accessing }
 PWBUnitTestsRunner >> errorsLogFilePath [
 
@@ -20,14 +26,14 @@ PWBUnitTestsRunner >> pathToPBUnitReportFile [
 
 { #category : #running }
 PWBUnitTestsRunner >> run [
-
 	| exe command |
+	self clean.
 	exe := self pathToTarget pathString
-		       copyReplaceAll: self pathToTarget extension
-		       with: 'exe'.
+		copyReplaceAll: self pathToTarget extension
+		with: 'exe'.
 	command := 'start ' , exe , ' NOM_BAS=' , self testDatabase
-	           , ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target='
-	           , self pathToTarget pathString , ';'.
+		, ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target='
+		, self pathToTarget pathString , ';'.
 	LibC runCommand: command
 ]
 

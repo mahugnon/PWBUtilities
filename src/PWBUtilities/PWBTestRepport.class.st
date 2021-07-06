@@ -63,11 +63,10 @@ PWBTestRepport >> report [
 { #category : #running }
 PWBTestRepport >> run [
 	| xmlResult |
-	[ self wait.
-	self transformReportToJunitFormat asFileReference exists
-		ifFalse: [ self wait ].
-	xmlResult := XMLDOMParser
-		parse: self transformReportToJunitFormat asFileReference contents.
+	[ xmlResult := [ XMLDOMParser
+		parse: self transformReportToJunitFormat asFileReference contents ]
+		on: FileDoesNotExistException
+		do: [ self wait ].
 	numberOfFailures := (xmlResult nodes anyOne
 		attributeNodeAt: 'failures') value asInteger.
 	numberOfFailures > 0
