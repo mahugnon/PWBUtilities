@@ -7,7 +7,8 @@ Class {
 		'stream',
 		'repoName',
 		'headAuthor',
-		'prevAuthor'
+		'prevAuthor',
+		'author'
 	],
 	#category : #'PWBUtilities-Core'
 }
@@ -18,7 +19,7 @@ PWBSVNDiffViolationManager class >> prev: aPrevViolations head: aHeadViolations 
 ]
 
 { #category : #accessing }
-PWBSVNDiffViolationManager >> author: aString [ 
+PWBSVNDiffViolationManager >> author: aString [
 	author := aString
 ]
 
