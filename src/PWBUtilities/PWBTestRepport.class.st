@@ -5,7 +5,8 @@ Class {
 		'testDatabase',
 		'author',
 		'numberOfFailures',
-		'pathToJunitReportFile'
+		'pathToJunitReportFile',
+		'timeout'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -26,6 +27,12 @@ PWBTestRepport >> author: anObject [
 PWBTestRepport >> errorsLogFilePath [
 
 	
+]
+
+{ #category : #initialization }
+PWBTestRepport >> initialize [
+	super initialize.
+	timeout := 0
 ]
 
 { #category : #running }
@@ -66,7 +73,9 @@ PWBTestRepport >> run [
 	[ xmlResult := [ XMLDOMParser
 		parse: self transformReportToJunitFormat asFileReference contents ]
 		on: FileDoesNotExistException
-		do: [ self wait ].
+		do: [ timeout < 6
+				ifTrue: [ self wait ]
+				ifFalse: [ Exception signal: 'Something went wrong. Tests are not executed' ] ].
 	numberOfFailures := (xmlResult nodes anyOne
 		attributeNodeAt: 'failures') value asInteger.
 	numberOfFailures > 0
@@ -87,6 +96,7 @@ PWBTestRepport >> transformReportToJunitFormat [
 ]
 
 { #category : #waiting }
-PWBTestRepport >> wait [ 
-(Duration minutes: 2) asDelay wait.
+PWBTestRepport >> wait [
+	timeout := timeout + 2.
+	(Duration minutes: 2) asDelay wait
 ]
