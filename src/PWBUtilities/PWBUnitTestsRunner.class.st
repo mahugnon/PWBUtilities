@@ -32,8 +32,8 @@ PWBUnitTestsRunner >> run [
 		copyReplaceAll: self pathToTarget extension
 		with: 'exe'.
 	command := 'start ' , exe , ' NOM_BAS=' , self testDatabase
-		, ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target='
-		, self pathToTarget pathString , ';'.
+		, ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target=cwm.pbt;project='
+		, self pathToTarget parent pathString , ';'.
 	LibC runCommand: command
 ]
 

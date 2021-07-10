@@ -56,7 +56,7 @@ PWBCIModel class >> runTestsExample [
 	PWBUnitTestsRunner new
 		testDatabase: 'CIM999NC';
 		pathToTarget:
-			'C:\Users\h.houekpetodji\Documents\EspaceDeTravail\Local_repository\developpement\cwm.exe'
+			'C:\Users\h.houekpetodji\Documents\EspaceDeTravail\Local_repository\developpement\cwm.pbt'
 				asFileReference;
 		run
 ]
