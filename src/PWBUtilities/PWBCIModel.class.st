@@ -52,7 +52,6 @@ PWBCIModel class >> repoUrl: aRepoStringUrl targetName: aTargetName [
 { #category : #'as yet unclassified' }
 PWBCIModel class >> runTestsExample [
 	<script>
-	self halt.
 	PWBUnitTestsRunner new
 		testDatabase: 'CIM999NC';
 		pathToTarget:
