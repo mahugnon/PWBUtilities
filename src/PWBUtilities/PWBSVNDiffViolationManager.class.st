@@ -1,6 +1,6 @@
 Class {
 	#name : #PWBSVNDiffViolationManager,
-	#superclass : #Object,
+	#superclass : #PWBAbstractCommand,
 	#instVars : [
 		'head',
 		'prev',
@@ -10,7 +10,7 @@ Class {
 		'prevAuthor',
 		'author'
 	],
-	#category : #'PWBUtilities-Core'
+	#category : #'PWBUtilities-PWBCommands'
 }
 
 { #category : #'as yet unclassified' }
@@ -35,6 +35,11 @@ PWBSVNDiffViolationManager >> diffBetween: aCollection1 and: aCollection2 [
 { #category : #'as yet unclassified' }
 PWBSVNDiffViolationManager >> diffHeadPrev [
 	^ self diffBetween: self head and: self prev
+]
+
+{ #category : #accessing }
+PWBSVNDiffViolationManager >> errorsLogFilePath [
+
 ]
 
 { #category : #'as yet unclassified' }
@@ -123,14 +128,6 @@ PWBSVNDiffViolationManager >> prevAuthor: aString [
 	prevAuthor := aString
 ]
 
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> publishDiff [
-	| diffHeadPrev diffPrevHead |
-	diffHeadPrev := self diffBetween: self head and: self prev.
-	diffPrevHead := self diffBetween: self prev and: self head.
-	self reportViolation: diffHeadPrev withFixed: diffPrevHead
-]
-
 { #category : #running }
 PWBSVNDiffViolationManager >> recipientList [
 	| recipientList authorMail |
@@ -177,11 +174,20 @@ PWBSVNDiffViolationManager >> reportViolation: diffHeadPrev withFixed: diffPrevH
 	self stream ifNotEmpty: [ self sendMailMessageToCommitAuthor ]
 ]
 
+{ #category : #'as yet unclassified' }
+PWBSVNDiffViolationManager >> run [
+	| diffHeadPrev diffPrevHead |
+	diffHeadPrev := self diffBetween: self head and: self prev.
+	diffPrevHead := self diffBetween: self prev and: self head.
+	self reportViolation: diffHeadPrev withFixed: diffPrevHead
+]
+
 { #category : #running }
 PWBSVNDiffViolationManager >> sendMailMessageToCommitAuthor [
 	PWBPublisher new
 		recipientList: self recipientList;
 		text: stream contents;
+		subject: 'Powerbuilder Critics violation';
 		author: headAuthor;
 		run
 ]

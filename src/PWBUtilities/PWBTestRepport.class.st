@@ -1,3 +1,6 @@
+"
+I responsable for creating a report for last test result
+"
 Class {
 	#name : #PWBTestRepport,
 	#superclass : #PWBAbstractCommand,
@@ -71,6 +74,7 @@ PWBTestRepport >> report [
 		attachment: pathToJunitReportFile asFileReference;
 		author: self author;
 		text: self message;
+		subject: 'Rapport de test PBUnit';
 		run
 ]
 

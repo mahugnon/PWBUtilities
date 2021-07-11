@@ -1,3 +1,6 @@
+"
+I run Izy protect application tests unsing batch command
+"
 Class {
 	#name : #PWBUnitTestsRunner,
 	#superclass : #PWBAbstractCommand,

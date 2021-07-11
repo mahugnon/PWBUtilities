@@ -1,3 +1,6 @@
+"
+I responsable for sending report mail to the author
+"
 Class {
 	#name : #PWBPublisher,
 	#superclass : #PWBAbstractCommand,
@@ -5,7 +8,8 @@ Class {
 		'text',
 		'attachment',
 		'author',
-		'recipientList'
+		'recipientList',
+		'subject'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -67,7 +71,7 @@ PWBPublisher >> sendMailMessageToCommitAuthor [
 	mailMessage := MailMessage empty
 		from: 'pwbcritics@gmail.com';
 		date: DateAndTime now asEmailString;
-		subject: 'Rapport de test PBUnit';
+		subject: self subject;
 		to: self recipientList;
 		addAlternativePart: text contentType: 'text/html'.
 	self hasAttachment
@@ -78,6 +82,16 @@ PWBPublisher >> sendMailMessageToCommitAuthor [
 		sendPWBCriticsUsingGMailAccountPassword: '8v$oPDA0cA'
 		to: self recipientList
 		message: mailMessage
+]
+
+{ #category : #running }
+PWBPublisher >> subject [
+	^ subject
+]
+
+{ #category : #running }
+PWBPublisher >> subject: aString [
+	subject := aString
 ]
 
 { #category : #tests }

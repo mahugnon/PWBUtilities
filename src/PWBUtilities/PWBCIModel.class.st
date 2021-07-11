@@ -1,3 +1,6 @@
+"
+I'm responsible  for executing PWBCI commands
+"
 Class {
 	#name : #PWBCIModel,
 	#superclass : #Object,
@@ -60,63 +63,6 @@ PWBCIModel class >> runTestsExample [
 		run
 ]
 
-{ #category : #'as yet unclassified' }
-PWBCIModel >> cleanUp [
-	(FileSystem workingDirectory / ('svnPrev' , self repoName))
-		ensureDeleteAll.
-		(FileSystem workingDirectory / ('svnHead' , self repoName))
-		ensureDeleteAll.
-		
-]
-
-{ #category : #'as yet unclassified' }
-PWBCIModel >> diffFilesUrls [
-	| diff |
-	diff := LibC
-		resultOfCommand:
-			'svn diff -r ' , svnPrev asString , ':' , svnHead asString
-				, String space , repoUrl , ' --summarize'.
-	^ diff lines asOrderedCollection
-		reject: [ :line | 
-			(line beginsWith: 'D')
-				or: [ {'.pbl' . '.pbd' . '.pbg' . 'pbt' . '.srd' . '.sra' . '.opt'.'.exe'}
-						anySatisfy: [ :extension | line endsWith: extension ] ] ]
-		thenCollect: [ :e | e copyFrom: 9 to: e size ]
-]
-
-{ #category : #'as yet unclassified' }
-PWBCIModel >> downloadDiffFilesForHeadAndPrev [
-	| diffFiles |
-	diffFiles := self diffFilesUrls.
-	self
-		downloadFiles: diffFiles
-		rev: svnPrev
-		dest: (self ensureCreateDirStructure: 'svnPrev' , self repoName) pathString.
-	self
-		downloadFiles: diffFiles
-		rev: svnHead
-		dest: (self ensureCreateDirStructure: 'svnHead' , self repoName) pathString
-]
-
-{ #category : #'as yet unclassified' }
-PWBCIModel >> downloadFiles: diffFiles rev: anInteger dest: aString [
-	diffFiles
-		do: [ :file | 
-			| command |
-			command := 'svn export -r ' , anInteger asString , String space
-				, file , String space , aString.
-			LibC resultOfCommand: command ]
-]
-
-{ #category : #'as yet unclassified' }
-PWBCIModel >> ensureCreateDirStructure: aString [
-	| dest |
-	(FileSystem workingDirectory / aString) ensureDeleteAll.
-	(FileSystem workingDirectory / aString) ensureCreateDirectory.
-	dest := FileSystem workingDirectory / aString / 'lib'.
-	^ dest ensureCreateDirectory
-]
-
 { #category : #accessing }
 PWBCIModel >> getSvnInfo [
 	| info |
@@ -148,6 +94,14 @@ PWBCIModel >> initialize [
 ]
 
 { #category : #running }
+PWBCIModel >> isNewCommit [
+	| lastHead |
+	lastHead := svnHead.
+	self getSvnInfo.
+	^ svnHead ~= lastHead
+]
+
+{ #category : #running }
 PWBCIModel >> isPBLCommit [
 	^ commitMessage trim includesSubstring: 'pbl'
 ]
@@ -165,16 +119,6 @@ PWBCIModel >> isValidRepoUrl [
 { #category : #testing }
 PWBCIModel >> isValidTargetName [
 	^ targetName endsWith: '.pbt'
-]
-
-{ #category : #accessing }
-PWBCIModel >> job [
-
-	[ 
-	[ true ] whileTrue: [ 
-		self run.
-		(Duration days: 1) asDelay wait ] ] forkNamed:
-		self repoName , '_TestRunner'
 ]
 
 { #category : #'as yet unclassified' }
@@ -247,12 +191,9 @@ PWBCIModel >> reportTestResult [
 
 { #category : #running }
 PWBCIModel >> run [
-	| lastHead |
 	[ [ true ]
-		whileTrue: [ lastHead := svnHead.
-			self getSvnInfo.
-			svnHead = lastHead
-				ifFalse: [ self runViolations.
+		whileTrue: [ self isNewCommit
+				ifTrue: [ self runViolations.
 					self runUnitTests ].
 			(Duration minutes: 5) asDelay wait ] ]
 		forkNamed: 'PWBCI_' , self repoName
@@ -273,21 +214,13 @@ PWBCIModel >> runUnitTests [
 
 { #category : #'as yet unclassified' }
 PWBCIModel >> runViolations [
-	self downloadDiffFilesForHeadAndPrev.
-	(PWBSVNDiffViolationManager
-		prev:
-		(ViolationRunner
-		importFromFolder: FileSystem workingDirectory / ('svnPrev' , self repoName))
-		violations
-		head:
-		(ViolationRunner
-				importFromFolder: FileSystem workingDirectory / ('svnHead' , self repoName))
-				violations)
-		headAuthor: svnHeadAuthor;
-		prevAuthor: svnPrevAuthor;
-		repoName: self repoName;
-		publishDiff.
-	self cleanUp
+	PWBViolationsRunner new
+		repoUrl: repoUrl;
+		svnHead: svnHead;
+		svnPrev: svnPrev;
+		svnHeadAuthor: svnHeadAuthor;
+		svnPrevAuthor: svnPrevAuthor;
+		run
 ]
 
 { #category : #'as yet unclassified' }
@@ -313,4 +246,23 @@ PWBCIModel >> targetName [
 PWBCIModel >> targetName: aString [
 
 	targetName := aString
+]
+
+{ #category : #accessing }
+PWBCIModel >> testJob [
+	[ [ true ]
+		whileTrue: [ self isNewCommit
+				ifTrue: [ self runUnitTests ].
+			(Duration minutes: 5) asDelay wait ] ]
+		forkNamed: 'PWBCI_' , self repoName
+]
+
+{ #category : #accessing }
+PWBCIModel >> violationJob [
+
+	[ 
+	[ true ] whileTrue: [ 
+		self run.
+		(Duration days: 1) asDelay wait ] ] forkNamed:
+		self repoName , '_TestRunner'
 ]
