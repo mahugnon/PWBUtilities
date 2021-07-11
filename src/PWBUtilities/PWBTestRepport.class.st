@@ -8,9 +8,10 @@ Class {
 		'testDatabase',
 		'author',
 		'numberOfFailures',
-		'pathToJunitReportFile',
 		'timeout',
-		'reportStyle'
+		'reportStyle',
+		'pathToJUnitReportFile',
+		'pathToHtmlReportFile'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -42,17 +43,19 @@ PWBTestRepport >> initialize [
 
 { #category : #running }
 PWBTestRepport >> message [
-^'Vous avez ', numberOfFailures  asString ,' test(s) qui ont echoues'
+	^ 'Vous avez ' , numberOfFailures asString
+		, ' test(s) qui ont echoues' , String crlf
+		, pathToHtmlReportFile asFileReference contents
 ]
 
 { #category : #running }
 PWBTestRepport >> parseReport [
-	^ XMLDOMParser parse: self transformReport asFileReference contents
+	self transformReport.
+	^ XMLDOMParser parse: pathToJUnitReportFile asFileReference contents
 ]
 
 { #category : #running }
 PWBTestRepport >> pathToPBUnitReportFile [
-
 	^ self pathToTarget parent / 'pbunit-results.xml'
 ]
 
@@ -65,13 +68,13 @@ PWBTestRepport >> pathToSaxonTransformer [
 { #category : #running }
 PWBTestRepport >> pathToXMLStyle [
 
-	^ ' -xsl:"C:\PBCI_Utilities\',reportStyle ,'.xsl"'
+	^ '"C:\PBCI_Utilities\',reportStyle ,'.xsl"'
 ]
 
 { #category : #running }
 PWBTestRepport >> report [
 	PWBPublisher new
-		attachment: pathToJunitReportFile asFileReference;
+		attachment: pathToHtmlReportFile asFileReference;
 		author: self author;
 		text: self message;
 		subject: 'Rapport de test PBUnit';
@@ -96,14 +99,15 @@ PWBTestRepport >> run [
 { #category : #running }
 PWBTestRepport >> transformReport [
 	| command |
-	pathToJunitReportFile := self pathToPBUnitReportFile pathString
+	pathToJUnitReportFile := self pathToPBUnitReportFile pathString
 		copyReplaceAll: self pathToPBUnitReportFile basenameWithoutExtension
 		with: 'junit-report'.
 	command := 'java -jar ' , self pathToSaxonTransformer , ' -s:'
-		, self pathToPBUnitReportFile pathString , self pathToXMLStyle
-		, ' -o:' , pathToJunitReportFile.
+		, self pathToPBUnitReportFile pathString , ' -xsl:'
+		, self pathToXMLStyle , ' -o:' , pathToJUnitReportFile.
 	LibC runCommand: command.
-	^ pathToJunitReportFile
+	pathToHtmlReportFile := self pathToTarget parent
+		/ 'pbunit-results.html'
 ]
 
 { #category : #waiting }
