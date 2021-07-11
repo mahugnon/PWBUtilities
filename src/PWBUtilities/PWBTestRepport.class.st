@@ -6,7 +6,8 @@ Class {
 		'author',
 		'numberOfFailures',
 		'pathToJunitReportFile',
-		'timeout'
+		'timeout',
+		'reportStyle'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -32,7 +33,8 @@ PWBTestRepport >> errorsLogFilePath [
 { #category : #initialization }
 PWBTestRepport >> initialize [
 	super initialize.
-	timeout := 0
+	timeout := 0.
+	reportStyle :='junit'
 ]
 
 { #category : #running }
@@ -41,9 +43,8 @@ PWBTestRepport >> message [
 ]
 
 { #category : #running }
-PWBTestRepport >> pathToJunitXMLStyle [
-
-	^ ' -xsl:"C:\PBCI_Utilities\junit.xsl"'
+PWBTestRepport >> parseReport [
+	^ XMLDOMParser parse: self transformReport asFileReference contents
 ]
 
 { #category : #running }
@@ -59,6 +60,12 @@ PWBTestRepport >> pathToSaxonTransformer [
 ]
 
 { #category : #running }
+PWBTestRepport >> pathToXMLStyle [
+
+	^ ' -xsl:"C:\PBCI_Utilities\',reportStyle ,'.xsl"'
+]
+
+{ #category : #running }
 PWBTestRepport >> report [
 	PWBPublisher new
 		attachment: pathToJunitReportFile asFileReference;
@@ -70,11 +77,11 @@ PWBTestRepport >> report [
 { #category : #running }
 PWBTestRepport >> run [
 	| xmlResult |
-	[ xmlResult := [ XMLDOMParser
-		parse: self transformReportToJunitFormat asFileReference contents ]
+	[ xmlResult := [ self parseReport ]
 		on: FileDoesNotExistException
 		do: [ timeout < 6
-				ifTrue: [ self wait ]
+				ifTrue: [ self wait.
+					self parseReport ]
 				ifFalse: [ Exception signal: 'Something went wrong. Tests are not executed' ] ].
 	numberOfFailures := (xmlResult nodes anyOne
 		attributeNodeAt: 'failures') value asInteger.
@@ -83,13 +90,13 @@ PWBTestRepport >> run [
 ]
 
 { #category : #running }
-PWBTestRepport >> transformReportToJunitFormat [
+PWBTestRepport >> transformReport [
 	| command |
 	pathToJunitReportFile := self pathToPBUnitReportFile pathString
 		copyReplaceAll: self pathToPBUnitReportFile basenameWithoutExtension
 		with: 'junit-report'.
 	command := 'java -jar ' , self pathToSaxonTransformer , ' -s:'
-		, self pathToPBUnitReportFile pathString , self pathToJunitXMLStyle
+		, self pathToPBUnitReportFile pathString , self pathToXMLStyle
 		, ' -o:' , pathToJunitReportFile.
 	LibC runCommand: command.
 	^ pathToJunitReportFile

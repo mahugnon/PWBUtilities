@@ -10,6 +10,7 @@ Class {
 { #category : #cleaning }
 PWBUnitTestsRunner >> clean [
 	(self pathToTarget parent / 'pbunit-results.xml') ensureDelete.
+	(self pathToTarget parent / 'pbunit-results.txt') ensureDelete.
 	(self pathToTarget parent / 'junit-report.xml') ensureDelete
 ]
 

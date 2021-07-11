@@ -55,10 +55,10 @@ PWBCIUI class >> run: aSVNRepoURL [
 { #category : #running }
 PWBCIUI class >> updateData: aBuilder [
 	<worldMenu>
-	(aBuilder item: #RunPWBViolations)
+	(aBuilder item: #PWBCI)
 		parent: #PWBTools;
-		help: 'Launch process to alert on new violations on last commit';
-		label: 'RunPWBViolations';
+		help: 'Launch powerbuilder ci';
+		label: 'PWBCI';
 		action: [ self run ]
 ]
 
