@@ -50,7 +50,13 @@ PWBTestRepport >> message [
 
 { #category : #running }
 PWBTestRepport >> parseReport [
-	self transformReport.
+	[ self transformReport ]
+		on: FileDoesNotExistException
+		do: [ timeout < 6
+				ifTrue: [ self wait.
+					self parseReport ]
+				ifFalse:
+					[ Exception signal: 'Something went wrong. Tests are not executed' ] ].
 	^ XMLDOMParser parse: pathToJUnitReportFile asFileReference contents
 ]
 
@@ -84,12 +90,7 @@ PWBTestRepport >> report [
 { #category : #running }
 PWBTestRepport >> run [
 	| xmlResult |
-	[ xmlResult := [ self parseReport ]
-		on: FileDoesNotExistException
-		do: [ timeout < 6
-				ifTrue: [ self wait.
-					self parseReport ]
-				ifFalse: [ Exception signal: 'Something went wrong. Tests are not executed' ] ].
+	[ xmlResult := self parseReport.
 	numberOfFailures := (xmlResult nodes anyOne
 		attributeNodeAt: 'failures') value asInteger.
 	numberOfFailures > 0
