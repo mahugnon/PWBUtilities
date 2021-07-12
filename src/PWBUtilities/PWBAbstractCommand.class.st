@@ -27,7 +27,7 @@ PWBAbstractCommand class >> updateData: aBuilder [
 
 { #category : #accessing }
 PWBAbstractCommand >> errorsLogFilePath [
-self subclassResponsibility 
+
 ]
 
 { #category : #accessing }
@@ -46,8 +46,8 @@ PWBAbstractCommand >> powerbuilderProjetDirectory [
 ]
 
 { #category : #running }
-PWBAbstractCommand >> run [ 
-self subclassResponsibility 
+PWBAbstractCommand >> run [
+	^ self subclassResponsibility
 ]
 
 { #category : #'private-accessing' }

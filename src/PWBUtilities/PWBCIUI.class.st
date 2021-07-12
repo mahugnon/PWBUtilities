@@ -83,12 +83,15 @@ PWBCIUI >> initializeLocalDirectoryTextInput [
 		label: '...';
 		action: [ model
 				localDirectory: (UITheme builder chooseDirectory: 'Select a directory').
+			localDirectoryTextInput input
+				acceptText: model localDirectory pathString.
 			self update ]
 ]
 
 { #category : #initialization }
 PWBCIUI >> initializePresenters [
 	model := PWBCIModel new.
+	model ui: self.
 	self initializeRepoUrlTextInput.
 	self initializeTargetNameTextInput.
 	self initializeLocalDirectoryTextInput.

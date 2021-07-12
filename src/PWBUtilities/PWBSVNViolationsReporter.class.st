@@ -1,5 +1,8 @@
+"
+I compute difference betwen two sets of violations
+"
 Class {
-	#name : #PWBSVNDiffViolationManager,
+	#name : #PWBSVNViolationsReporter,
 	#superclass : #PWBAbstractCommand,
 	#instVars : [
 		'head',
@@ -7,24 +10,18 @@ Class {
 		'stream',
 		'repoName',
 		'headAuthor',
-		'prevAuthor',
-		'author'
+		'prevAuthor'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
 
 { #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager class >> prev: aPrevViolations head: aHeadViolations [
+PWBSVNViolationsReporter class >> prev: aPrevViolations head: aHeadViolations [
 	^ self new prev: aPrevViolations head: aHeadViolations
 ]
 
-{ #category : #accessing }
-PWBSVNDiffViolationManager >> author: aString [
-	author := aString
-]
-
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> diffBetween: aCollection1 and: aCollection2 [
+{ #category : #running }
+PWBSVNViolationsReporter >> diffBetween: aCollection1 and: aCollection2 [
 	^ aCollection1
 		select: [ :violation | 
 			aCollection2
@@ -32,49 +29,39 @@ PWBSVNDiffViolationManager >> diffBetween: aCollection1 and: aCollection2 [
 					[ :each | (violation isSameAs: each) not or: [ violation isReportCrossCommitViolation ] ] ]
 ]
 
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> diffHeadPrev [
-	^ self diffBetween: self head and: self prev
-]
-
-{ #category : #accessing }
-PWBSVNDiffViolationManager >> errorsLogFilePath [
-
-]
-
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> existViolations: diffHeadPrev [
+{ #category : #running }
+PWBSVNViolationsReporter >> existViolations: diffHeadPrev [
 	^ diffHeadPrev isNotEmpty
 ]
 
 { #category : #accessing }
-PWBSVNDiffViolationManager >> head [
+PWBSVNViolationsReporter >> head [
 	^ head
 ]
 
 { #category : #accessing }
-PWBSVNDiffViolationManager >> head: anObject [
+PWBSVNViolationsReporter >> head: anObject [
 	head := anObject
 ]
 
 { #category : #accessing }
-PWBSVNDiffViolationManager >> headAuthor: aString [ 
+PWBSVNViolationsReporter >> headAuthor: aString [ 
 	headAuthor := aString
 ]
 
 { #category : #initialization }
-PWBSVNDiffViolationManager >> initialize [
+PWBSVNViolationsReporter >> initialize [
 	super initialize.
 	stream := WriteStream on: String new
 ]
 
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> isAuthorFixViolations: diffPrevHead [
+{ #category : #running }
+PWBSVNViolationsReporter >> isAuthorFixViolations: diffPrevHead [
 	^ diffPrevHead isNotEmpty and: [ prevAuthor = headAuthor ]
 ]
 
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> prepareEncouragmentReport: aCollection with: anInteger [
+{ #category : #running }
+PWBSVNViolationsReporter >> prepareEncouragmentReport: aCollection with: anInteger [
 	stream
 		<<
 			'<h1>Bravo !! :) </h1><br/>
@@ -89,8 +76,8 @@ PWBSVNDiffViolationManager >> prepareEncouragmentReport: aCollection with: anInt
 			stream << '</ul>' ]
 ]
 
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> prepareReport: aCollection [
+{ #category : #running }
+PWBSVNViolationsReporter >> prepareReport: aCollection [
 	stream
 		<< '<p>';
 		<< self violationContext.
@@ -98,8 +85,8 @@ PWBSVNDiffViolationManager >> prepareReport: aCollection [
 	stream << '</ul></p>'
 ]
 
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> prepareViolationReport: aCollection [
+{ #category : #running }
+PWBSVNViolationsReporter >> prepareViolationReport: aCollection [
 	stream
 		<< '<p>';
 		<< self violationContext.
@@ -108,28 +95,28 @@ PWBSVNDiffViolationManager >> prepareViolationReport: aCollection [
 ]
 
 { #category : #accessing }
-PWBSVNDiffViolationManager >> prev [
+PWBSVNViolationsReporter >> prev [
 	^ prev
 ]
 
 { #category : #accessing }
-PWBSVNDiffViolationManager >> prev: anObject [
+PWBSVNViolationsReporter >> prev: anObject [
 	prev := anObject
 ]
 
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> prev: aPrevViolations head: aHeadViolations [
+{ #category : #running }
+PWBSVNViolationsReporter >> prev: aPrevViolations head: aHeadViolations [
 	prev := aPrevViolations.
 	head := aHeadViolations
 ]
 
 { #category : #accessing }
-PWBSVNDiffViolationManager >> prevAuthor: aString [
+PWBSVNViolationsReporter >> prevAuthor: aString [
 	prevAuthor := aString
 ]
 
 { #category : #running }
-PWBSVNDiffViolationManager >> recipientList [
+PWBSVNViolationsReporter >> recipientList [
 	| recipientList authorMail |
 	authorMail := headAuthor , '@sa-cim.fr'.
 	recipientList := {'Jerome.Sudich@sa-cim.fr'.
@@ -140,26 +127,26 @@ PWBSVNDiffViolationManager >> recipientList [
 ]
 
 { #category : #accessing }
-PWBSVNDiffViolationManager >> repoName [
+PWBSVNViolationsReporter >> repoName [
 	^ repoName
 ]
 
 { #category : #accessing }
-PWBSVNDiffViolationManager >> repoName: aString [
+PWBSVNViolationsReporter >> repoName: aString [
 	repoName := aString
 ]
 
 { #category : #running }
-PWBSVNDiffViolationManager >> reportViolation: violations [
+PWBSVNViolationsReporter >> reportViolation: violations [
 	self prepareReport: violations.
 	LibC
 		resultOfCommand:
-			'powershell -file "sendMail.ps1" "' , self stream , '" "' , author
+			'powershell -file "sendMail.ps1" "' , self stream , '" "' , headAuthor
 				, '@sa-cim.fr"'
 ]
 
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> reportViolation: diffHeadPrev withFixed: diffPrevHead [
+{ #category : #running }
+PWBSVNViolationsReporter >> reportViolation: diffHeadPrev withFixed: diffPrevHead [
 	(self existViolations: diffHeadPrev)
 		ifTrue: [ (self isAuthorFixViolations: diffPrevHead)
 				ifTrue:
@@ -174,8 +161,8 @@ PWBSVNDiffViolationManager >> reportViolation: diffHeadPrev withFixed: diffPrevH
 	self stream ifNotEmpty: [ self sendMailMessageToCommitAuthor ]
 ]
 
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> run [
+{ #category : #running }
+PWBSVNViolationsReporter >> run [
 	| diffHeadPrev diffPrevHead |
 	diffHeadPrev := self diffBetween: self head and: self prev.
 	diffPrevHead := self diffBetween: self prev and: self head.
@@ -183,7 +170,7 @@ PWBSVNDiffViolationManager >> run [
 ]
 
 { #category : #running }
-PWBSVNDiffViolationManager >> sendMailMessageToCommitAuthor [
+PWBSVNViolationsReporter >> sendMailMessageToCommitAuthor [
 	PWBPublisher new
 		recipientList: self recipientList;
 		text: stream contents;
@@ -193,12 +180,12 @@ PWBSVNDiffViolationManager >> sendMailMessageToCommitAuthor [
 ]
 
 { #category : #accessing }
-PWBSVNDiffViolationManager >> stream [
+PWBSVNViolationsReporter >> stream [
 	^ stream contents
 ]
 
-{ #category : #'as yet unclassified' }
-PWBSVNDiffViolationManager >> violationContext [
+{ #category : #running }
+PWBSVNViolationsReporter >> violationContext [
 	^ 'Dans le but d''améliorer le code Protect, on a décider de supprimer progressivement les 9999 sur find ou rowscopy ainsi que tout ce qui ne respecte pas les normes de developpement instaurées dans l''équipe. Dans cette optique, je vous rapporte les violations suivantes sur la version '
 		, repoName , ':'
 ]

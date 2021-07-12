@@ -121,7 +121,7 @@ PWBCIModel >> isValidTargetName [
 	^ targetName endsWith: '.pbt'
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 PWBCIModel >> loadLastChanges [
 
 	self repoLocalPath hasChildren
@@ -151,7 +151,7 @@ PWBCIModel >> refreshPBLs [
 	PBLRegenerator runOn: self pathToTarget
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 PWBCIModel >> repoLocalPath [
 
 	| path |
@@ -160,7 +160,7 @@ PWBCIModel >> repoLocalPath [
 	^ path
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 PWBCIModel >> repoName [
 
 	"https://CIM-SVN.SA-CIM.local/svn/TestCI>>TestCI"
@@ -212,7 +212,7 @@ PWBCIModel >> runUnitTests [
 	self reportTestResult
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 PWBCIModel >> runViolations [
 	PWBViolationsRunner new
 		repoUrl: repoUrl;
@@ -223,14 +223,14 @@ PWBCIModel >> runViolations [
 		run
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 PWBCIModel >> svnCheckout [
 
 	LibC resultOfCommand: 'start svn checkout ' , self repoUrl , String space
 		, self repoLocalPath pathString
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #running }
 PWBCIModel >> svnUpdate [
 
 	LibC runCommand: 'svn update ' , self repoLocalPath pathString
@@ -255,6 +255,11 @@ PWBCIModel >> testJob [
 				ifTrue: [ self runUnitTests ].
 			(Duration minutes: 5) asDelay wait ] ]
 		forkNamed: 'PWBCI_' , self repoName
+]
+
+{ #category : #accessing }
+PWBCIModel >> ui: aPWBCIUI [ 
+	ui := aPWBCIUI
 ]
 
 { #category : #accessing }

@@ -89,7 +89,7 @@ PWBViolationsRunner >> repoUrl: anObject [
 { #category : #running }
 PWBViolationsRunner >> run [
 	self downloadDiffFilesForHeadAndPrev.
-	(PWBSVNDiffViolationManager
+	(PWBSVNViolationsReporter
 		prev:
 		(ViolationRunner
 		importFromFolder: FileSystem workingDirectory / ('svnPrev' , self repoName))

@@ -34,11 +34,6 @@ PWBPublisher >> author: anObject [
 	author := anObject
 ]
 
-{ #category : #accessing }
-PWBPublisher >> errorsLogFilePath [
-
-]
-
 { #category : #running }
 PWBPublisher >> hasAttachment [
 	^ attachment isNotNil
