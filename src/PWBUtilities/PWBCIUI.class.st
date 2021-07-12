@@ -91,7 +91,6 @@ PWBCIUI >> initializeLocalDirectoryTextInput [
 { #category : #initialization }
 PWBCIUI >> initializePresenters [
 	model := PWBCIModel new.
-	model ui: self.
 	self initializeRepoUrlTextInput.
 	self initializeTargetNameTextInput.
 	self initializeLocalDirectoryTextInput.

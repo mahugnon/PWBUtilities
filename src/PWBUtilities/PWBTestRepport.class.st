@@ -50,14 +50,14 @@ PWBTestRepport >> message [
 
 { #category : #running }
 PWBTestRepport >> parseReport [
-	[ self transformReport ]
-		on: FileDoesNotExistException
-		do: [ timeout < 6
-				ifTrue: [ self wait.
-					self parseReport ]
-				ifFalse:
-					[ Exception signal: 'Something went wrong. Tests are not executed' ] ].
-	^ XMLDOMParser parse: pathToJUnitReportFile asFileReference contents
+	self transformReport.
+	^ XMLDOMParser
+		parse: self pathToJUnitReportFile asFileReference contents
+]
+
+{ #category : #running }
+PWBTestRepport >> pathToJUnitReportFile [
+	^ self pathToTarget parent / 'junit-report.xml'
 ]
 
 { #category : #running }
@@ -99,16 +99,34 @@ PWBTestRepport >> run [
 
 { #category : #running }
 PWBTestRepport >> transformReport [
-	| command |
-	pathToJUnitReportFile := self pathToPBUnitReportFile pathString
-		copyReplaceAll: self pathToPBUnitReportFile basenameWithoutExtension
-		with: 'junit-report'.
-	command := 'java -jar ' , self pathToSaxonTransformer , ' -s:'
-		, self pathToPBUnitReportFile pathString , ' -xsl:'
-		, self pathToXMLStyle , ' -o:' , pathToJUnitReportFile.
-	LibC runCommand: command.
+	[ self pathToPBUnitReportFile exists ]
+		whileFalse: [ self wait.
+			timeout > 6
+				ifTrue: [ Exception signal: 'Something went wrong. Tests are not executed' ] ].
+	LibC runCommand: self transformationCommand.
 	pathToHtmlReportFile := self pathToTarget parent
 		/ 'pbunit-results.html'
+]
+
+{ #category : #running }
+PWBTestRepport >> transformationCommand [
+	^ String
+		streamContents: [ :stream | 
+			stream
+				<< 'java';
+				space;
+				<< '-jar';
+				space;
+				<< self pathToSaxonTransformer;
+				space;
+				<< '-s:';
+				<< self pathToPBUnitReportFile pathString;
+				space;
+				<< '-xsl:';
+				<< self pathToXMLStyle;
+				space;
+				<< '-o:';
+				<< self pathToJUnitReportFile pathString ]
 ]
 
 { #category : #waiting }

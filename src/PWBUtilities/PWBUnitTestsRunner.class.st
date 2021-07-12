@@ -5,10 +5,16 @@ Class {
 	#name : #PWBUnitTestsRunner,
 	#superclass : #PWBAbstractCommand,
 	#instVars : [
-		'testDatabase'
+		'testDatabase',
+		'author'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
+
+{ #category : #accessing }
+PWBUnitTestsRunner >> author: aString [
+	author := aString
+]
 
 { #category : #cleaning }
 PWBUnitTestsRunner >> clean [
@@ -29,6 +35,14 @@ PWBUnitTestsRunner >> pathToPBUnitReportFile [
 ]
 
 { #category : #running }
+PWBUnitTestsRunner >> reportTestResult [
+	PWBTestRepport new
+		pathToTarget: self pathToTarget;
+		author: author;
+		run
+]
+
+{ #category : #running }
 PWBUnitTestsRunner >> run [
 	| exe command |
 	self clean.
@@ -38,7 +52,9 @@ PWBUnitTestsRunner >> run [
 	command := 'start ' , exe , ' NOM_BAS=' , self testDatabase
 		, ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target=cwm.pbt;project='
 		, self pathToTarget parent pathString , ';'.
-	LibC runCommand: command
+	LibC runCommand: command.
+	self reportTestResult .
+	
 ]
 
 { #category : #running }

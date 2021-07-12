@@ -181,15 +181,6 @@ PWBCIModel >> repoUrl: anObject [
 ]
 
 { #category : #running }
-PWBCIModel >> reportTestResult [
-
-	PWBTestRepport new
-		pathToTarget: self pathToTarget;
-		author: svnHeadAuthor;
-		run
-]
-
-{ #category : #running }
 PWBCIModel >> run [
 	[ [ true ]
 		whileTrue: [ self isNewCommit
@@ -208,8 +199,8 @@ PWBCIModel >> runUnitTests [
 	PWBUnitTestsRunner new
 		testDatabase: 'CIM999NC';
 		pathToTarget: self pathToTarget;
-		run.
-	self reportTestResult
+		author: svnHeadAuthor;
+		run
 ]
 
 { #category : #running }
@@ -255,11 +246,6 @@ PWBCIModel >> testJob [
 				ifTrue: [ self runUnitTests ].
 			(Duration minutes: 5) asDelay wait ] ]
 		forkNamed: 'PWBCI_' , self repoName
-]
-
-{ #category : #accessing }
-PWBCIModel >> ui: aPWBCIUI [ 
-	ui := aPWBCIUI
 ]
 
 { #category : #accessing }
