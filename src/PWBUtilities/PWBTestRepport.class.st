@@ -102,7 +102,7 @@ PWBTestRepport >> transformReport [
 	[ self pathToPBUnitReportFile exists ]
 		whileFalse: [ self wait.
 			timeout > 6
-				ifTrue: [ Exception signal: 'Something went wrong. Tests are not executed' ] ].
+				ifTrue: [ Error signal: 'Something went wrong. Tests are not executed' ] ].
 	LibC runCommand: self transformationCommand.
 	pathToHtmlReportFile := self pathToTarget parent
 		/ 'pbunit-results.html'
