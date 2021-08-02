@@ -1,3 +1,6 @@
+"
+I am the user interface  of IzyProtect continious integration tool
+"
 Class {
 	#name : #PWBCIUI,
 	#superclass : #SpPresenter,
@@ -90,6 +93,7 @@ PWBCIUI >> initializeLocalDirectoryTextInput [
 
 { #category : #initialization }
 PWBCIUI >> initializePresenters [
+	super initializePresenters.
 	model := PWBCIModel new.
 	self initializeRepoUrlTextInput.
 	self initializeTargetNameTextInput.
