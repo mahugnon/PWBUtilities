@@ -10,7 +10,7 @@ Class {
 { #category : #api }
 PWBBuilder >> binaryResultName: aBaseNameWithoutExtension [
 	^ (self powerbuilderProjetDirectory
-		/ (aBaseNameWithoutExtension , 'exe')) pathString
+		/ (aBaseNameWithoutExtension , '.exe')) pathString
 ]
 
 { #category : #running }
