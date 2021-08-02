@@ -63,6 +63,11 @@ PWBCIModel class >> runTestsExample [
 		run
 ]
 
+{ #category : #running }
+PWBCIModel >> buildProject [
+	PWBBuilder runOn: self pathToTarget pathString
+]
+
 { #category : #accessing }
 PWBCIModel >> getSvnInfo [
 	| info |
@@ -126,7 +131,8 @@ PWBCIModel >> loadLastChanges [
 
 	self repoLocalPath hasChildren
 		ifTrue: [ self svnUpdate ]
-		ifFalse: [ self svnCheckout ]
+		ifFalse: [ self svnCheckout.
+			self buildProject ]
 ]
 
 { #category : #accessing }
@@ -185,15 +191,15 @@ PWBCIModel >> run [
 	[ [ true ]
 		whileTrue: [ self isNewCommit
 				ifTrue: [ self runViolations.
-					self runUnitTests ].
+					"self runUnitTests" ].
 			(Duration minutes: 5) asDelay wait ] ]
 		forkNamed: 'PWBCI_' , self repoName
 ]
 
 { #category : #running }
 PWBCIModel >> runUnitTests [
-	self isPBLCommit
-		ifFalse: [ ^ self ].
+"	self isPBLCommit
+		ifFalse: [ ^ self ]."
 	self loadLastChanges.
 	self refreshPBLs.
 	PWBUnitTestsRunner new
@@ -206,6 +212,7 @@ PWBCIModel >> runUnitTests [
 { #category : #running }
 PWBCIModel >> runViolations [
 	PWBViolationsRunner new
+		commander: self;
 		repoUrl: repoUrl;
 		svnHead: svnHead;
 		svnPrev: svnPrev;

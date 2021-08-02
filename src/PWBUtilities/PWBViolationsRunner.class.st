@@ -6,7 +6,8 @@ Class {
 		'svnPrevAuthor',
 		'svnPrev',
 		'svnHead',
-		'repoUrl'
+		'repoUrl',
+		'commander'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -20,6 +21,11 @@ PWBViolationsRunner >> cleanUp [
 		
 ]
 
+{ #category : #accessing }
+PWBViolationsRunner >> commander: anObject [
+	commander := anObject
+]
+
 { #category : #'as yet unclassified' }
 PWBViolationsRunner >> diffFilesUrls [
 	| diff |
@@ -27,11 +33,13 @@ PWBViolationsRunner >> diffFilesUrls [
 		resultOfCommand:
 			'svn diff -r ' , svnPrev asString , ':' , svnHead asString
 				, String space , repoUrl , ' --summarize'.
+	self isPBLCommitted: diff.
 	^ diff lines asOrderedCollection
 		reject: [ :line | 
 			(line beginsWith: 'D')
-				or: [ {'.pbl' . '.pbd' . '.pbg' . 'pbt' . '.srd' . '.sra' . '.opt'.'.exe'. '.log'}
-						anySatisfy: [ :extension | line endsWith: extension ] ] ]
+				or:
+					[ {'.pbl' . '.pbd' . '.pbg' . 'pbt' . '.srd' . '.sra' . '.opt' . '.exe'.
+					'.log'} anySatisfy: [ :extension | line endsWith: extension ] ] ]
 		thenCollect: [ :e | e copyFrom: 9 to: e size ]
 ]
 
@@ -71,6 +79,12 @@ PWBViolationsRunner >> ensureCreateDirStructure: aString [
 { #category : #accessing }
 PWBViolationsRunner >> errorsLogFilePath [
 
+]
+
+{ #category : #'as yet unclassified' }
+PWBViolationsRunner >> isPBLCommitted: diff [
+	(diff lines anySatisfy: [ :line | line endsWith: '.pbl' ])
+		ifTrue: [ commander runUnitTests ]
 ]
 
 { #category : #accessing }
