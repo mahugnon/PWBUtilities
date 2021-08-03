@@ -198,10 +198,11 @@ PWBCIModel >> run [
 
 { #category : #running }
 PWBCIModel >> runUnitTests [
-"	self isPBLCommit
+	"	self isPBLCommit
 		ifFalse: [ ^ self ]."
+
 	self loadLastChanges.
-	self refreshPBLs.
+	"self refreshPBLs."
 	PWBUnitTestsRunner new
 		testDatabase: 'CIM999NC';
 		pathToTarget: self pathToTarget;
