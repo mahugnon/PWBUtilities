@@ -232,7 +232,7 @@ PWBCIModel >> svnCheckout [
 { #category : #running }
 PWBCIModel >> svnUpdate [
 
-	LibC runCommand: 'svn update ' , self repoLocalPath pathString
+	LibC runCommand: 'svn update --accept mc' , self repoLocalPath pathString
 ]
 
 { #category : #running }
