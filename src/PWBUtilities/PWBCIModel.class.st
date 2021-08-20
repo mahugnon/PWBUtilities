@@ -132,7 +132,7 @@ PWBCIModel >> loadLastChanges [
 	self repoLocalPath hasChildren
 		ifTrue: [ self svnUpdate ]
 		ifFalse: [ self svnCheckout.
-			self buildProject ]
+		"	self buildProject "]
 ]
 
 { #category : #accessing }
