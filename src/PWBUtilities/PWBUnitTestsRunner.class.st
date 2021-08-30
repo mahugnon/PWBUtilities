@@ -51,6 +51,12 @@ PWBUnitTestsRunner >> errorsLogFilePath [
 
 ]
 
+{ #category : #running }
+PWBUnitTestsRunner >> isNoProtectRunning [
+	^ (LibC resultOfCommand: 'tasklist /fi "imagename eq cwm.exe"')
+		beginsWith: 'Inform'
+]
+
 { #category : #'as yet unclassified' }
 PWBUnitTestsRunner >> liblist: aString [
 	^ 'pbunit.pbl,' , aString
@@ -72,20 +78,25 @@ PWBUnitTestsRunner >> reportTestResult [
 
 { #category : #running }
 PWBUnitTestsRunner >> run [
-	| testLibs |
+	| testLibs iter stop testSuite |
+	stop := false.
+	iter := 1.
+	testSuite := '0'.
 	self clean.
 	testLibs := self testLibraries.
-	LibC
-		runCommand:
-			(self
-				basicScript: (self liblist: testLibs first basename)
-				testSuite: '0').
-	2 to: testLibs size do: [ :iter | 
-		LibC
-			runCommand:
-				(self
-					basicScript: (self liblist: (testLibs at: iter) basename)
-					testSuite: '1') ].
+	[ [ stop ]
+		whileFalse: [ iter > 1
+				ifTrue: [ testSuite := '1' ].
+			self isNoProtectRunning
+				ifTrue: [ LibC
+						runCommand:
+							(self
+								basicScript: (self liblist: (testLibs at: iter) basename)
+								testSuite: testSuite).
+					iter := iter + 1 ]
+				ifFalse: [ (Duration minutes: 1) asDelay wait ].
+			iter = testLibs size
+				ifTrue: [ stop := true ] ] ] forkNamed: 'PWBCI_Test'.
 	self reportTestResult
 ]
 
@@ -103,6 +114,6 @@ PWBUnitTestsRunner >> testDatabase: aString [
 
 { #category : #tests }
 PWBUnitTestsRunner >> testLibraries [
-	^ self pathToTarget parent directories
-		select: [ :dir | dir basename beginsWith: 'pbunit_' ]
+	^ self pathToTarget parent children
+		select: [ :file | file basename matchesRegexIgnoringCase: 'pbunit_.*.pbl' ]
 ]
