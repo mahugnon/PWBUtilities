@@ -192,7 +192,7 @@ PWBCIModel >> run [
 		whileTrue: [ self isNewCommit
 				ifTrue: [ self runViolations.
 					"self runUnitTests" ].
-			(Duration minutes: 5) asDelay wait ] ]
+			(Duration hours:1 ) asDelay wait ] ]
 		forkNamed: 'PWBCI_' , self repoName
 ]
 

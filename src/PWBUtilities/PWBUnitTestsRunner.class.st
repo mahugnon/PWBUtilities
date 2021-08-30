@@ -16,6 +16,29 @@ PWBUnitTestsRunner >> author: aString [
 	author := aString
 ]
 
+{ #category : #'as yet unclassified' }
+PWBUnitTestsRunner >> basicScript [
+	| exe |
+	exe := self pathToTarget pathString
+		copyReplaceAll: self pathToTarget extension
+		with: 'exe'.
+	^ 'start ' , exe , ' NOM_BAS=' , self testDatabase
+		, ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target='
+		, self pathToTarget pathString , ';liblist='
+]
+
+{ #category : #'as yet unclassified' }
+PWBUnitTestsRunner >> basicScript: liblist testSuite: aString [
+	| exe |
+	exe := self pathToTarget pathString
+		copyReplaceAll: self pathToTarget extension
+		with: 'exe'.
+	^ 'start ' , exe , ' NOM_BAS=' , self testDatabase
+		, ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target='
+		, self pathToTarget pathString , ';liblist=' , liblist
+		, ';testsuite=' , aString , ';'
+]
+
 { #category : #cleaning }
 PWBUnitTestsRunner >> clean [
 	(self pathToTarget parent / 'pbunit-results.xml') ensureDelete.
@@ -26,6 +49,11 @@ PWBUnitTestsRunner >> clean [
 { #category : #accessing }
 PWBUnitTestsRunner >> errorsLogFilePath [
 
+]
+
+{ #category : #'as yet unclassified' }
+PWBUnitTestsRunner >> liblist: aString [
+	^ 'pbunit.pbl,' , aString
 ]
 
 { #category : #running }
@@ -44,17 +72,21 @@ PWBUnitTestsRunner >> reportTestResult [
 
 { #category : #running }
 PWBUnitTestsRunner >> run [
-	| exe command |
+	| testLibs |
 	self clean.
-	exe := self pathToTarget pathString
-		copyReplaceAll: self pathToTarget extension
-		with: 'exe'.
-	command := 'start ' , exe , ' NOM_BAS=' , self testDatabase
-		, ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target=cwm.pbt;project='
-		, self pathToTarget parent pathString , ';'.
-	LibC runCommand: command.
-	self reportTestResult .
-	
+	testLibs := self testLibraries.
+	LibC
+		runCommand:
+			(self
+				basicScript: (self liblist: testLibs first basename)
+				testSuite: '0').
+	2 to: testLibs size do: [ :iter | 
+		LibC
+			runCommand:
+				(self
+					basicScript: (self liblist: (testLibs at: iter) basename)
+					testSuite: '1') ].
+	self reportTestResult
 ]
 
 { #category : #running }
@@ -67,4 +99,10 @@ PWBUnitTestsRunner >> testDatabase [
 PWBUnitTestsRunner >> testDatabase: aString [
 
 	testDatabase := aString
+]
+
+{ #category : #tests }
+PWBUnitTestsRunner >> testLibraries [
+	^ self pathToTarget parent directories
+		select: [ :dir | dir basename beginsWith: 'pbunit_' ]
 ]
