@@ -52,6 +52,12 @@ PWBUnitTestsRunner >> errorsLogFilePath [
 
 ]
 
+{ #category : #initialization }
+PWBUnitTestsRunner >> initialize [
+	super initialize.
+	delay := 0
+]
+
 { #category : #running }
 PWBUnitTestsRunner >> isNoProtectRunning [
 	^ (LibC resultOfCommand: 'tasklist /fi "imagename eq cwm.exe"')
