@@ -6,7 +6,8 @@ Class {
 	#superclass : #PWBAbstractCommand,
 	#instVars : [
 		'testDatabase',
-		'author'
+		'author',
+		'delay'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -94,10 +95,10 @@ PWBUnitTestsRunner >> run [
 								basicScript: (self liblist: (testLibs at: iter) basename)
 								testSuite: testSuite).
 					iter := iter + 1 ]
-				ifFalse: [ (Duration minutes: 1) asDelay wait ].
+				ifFalse: [ self wait ].
 			iter = testLibs size
-				ifTrue: [ stop := true ] ] ] forkNamed: 'PWBCI_Test'.
-	self reportTestResult
+				ifTrue: [ stop := true.
+					self reportTestResult ] ] ] forkNamed: 'PWBCI_Test'
 ]
 
 { #category : #running }
@@ -116,4 +117,12 @@ PWBUnitTestsRunner >> testDatabase: aString [
 PWBUnitTestsRunner >> testLibraries [
 	^ self pathToTarget parent children
 		select: [ :file | file basename matchesRegexIgnoringCase: 'pbunit_.*.pbl' ]
+]
+
+{ #category : #waiting }
+PWBUnitTestsRunner >> wait [
+	delay > 10
+		ifTrue: [ LibC runCommand: 'taskkill /f /im cwm.exe' ]
+		ifFalse: [ delay := delay + 1.
+			(Duration minutes: 1) asDelay wait ]
 ]
