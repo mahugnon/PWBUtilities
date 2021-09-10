@@ -11,9 +11,29 @@ BaselineOfPWBUtilities >> baseline: spec [
 		for: #common
 		do: [ self baselineOfXMLParser: spec.
 			self baselineOfPowerbuilderParser: spec.
+			self
+				baselineOfP3: spec;
+				baselineOfGlorp: spec.
 			spec
 				package: 'PWBUtilities'
 				with: [ spec requires: #('PowerBuilderParser') ] ]
+]
+
+{ #category : #baselines }
+BaselineOfPWBUtilities >> baselineOfGlorp: spec [
+	spec
+		baseline: 'Glorp'
+		with: [ spec repository: 'github://mahugnon/glorp:master' ]
+]
+
+{ #category : #baselines }
+BaselineOfPWBUtilities >> baselineOfP3: spec [
+	spec
+		baseline: 'P3'
+		with: [ spec
+				loads: #('glorp');
+				repository: 'github://mahugnon/P3:master' ].
+	"PharoDatabaseAccessor DefaultDriver: P3DatabaseDriver"
 ]
 
 { #category : #baselines }
