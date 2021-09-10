@@ -7,7 +7,8 @@ Class {
 	#instVars : [
 		'testDatabase',
 		'author',
-		'delay'
+		'delay',
+		'numberOfTests'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -23,7 +24,7 @@ PWBUnitTestsRunner >> basicScript [
 	exe := self pathToTarget pathString
 		copyReplaceAll: self pathToTarget extension
 		with: 'exe'.
-	^ 'start ' , exe , ' NOM_BAS=' , self testDatabase
+	^  exe , ' NOM_BAS=' , self testDatabase
 		, ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target='
 		, self pathToTarget pathString , ';liblist='
 ]
@@ -59,6 +60,15 @@ PWBUnitTestsRunner >> initialize [
 ]
 
 { #category : #running }
+PWBUnitTestsRunner >> isAllTestExecuted [
+	PWBTestResult loadAll size < self numberOfTests
+		ifTrue: [ Error
+				signal:
+					'I have ' , PWBTestResult loadAll size asString , 'instead of '
+						, self numberOfTests ]
+]
+
+{ #category : #running }
 PWBUnitTestsRunner >> isNoProtectRunning [
 	^ (LibC resultOfCommand: 'tasklist /fi "imagename eq cwm.exe"')
 		beginsWith: 'Inform'
@@ -69,10 +79,11 @@ PWBUnitTestsRunner >> liblist: aString [
 	^ 'pbunit.pbl,' , aString
 ]
 
-{ #category : #running }
-PWBUnitTestsRunner >> pathToPBUnitReportFile [
-
-	^ (self pathToTarget parent / 'pbunit-results.xml') pathString
+{ #category : #tests }
+PWBUnitTestsRunner >> numberOfTests [
+	numberOfTests
+		ifNil: [ numberOfTests := PWBTestsFinder runOn: self testLibraries ].
+	^ numberOfTests
 ]
 
 { #category : #running }
@@ -104,6 +115,7 @@ PWBUnitTestsRunner >> run [
 				ifFalse: [ self wait ].
 			iter = testLibs size
 				ifTrue: [ stop := true.
+					self isAllTestExecuted.
 					self reportTestResult ] ] ] forkNamed: 'PWBCI_Test'
 ]
 
@@ -121,8 +133,8 @@ PWBUnitTestsRunner >> testDatabase: aString [
 
 { #category : #tests }
 PWBUnitTestsRunner >> testLibraries [
-	^ self pathToTarget parent children
-		select: [ :file | file basename matchesRegexIgnoringCase: 'pbunit_.*.pbl' ]
+	^ (self pathToTarget parent / 'ws_objects') children
+		select: [ :file | file basename matchesRegexIgnoringCase: 'pbunit_.*' ]
 ]
 
 { #category : #waiting }

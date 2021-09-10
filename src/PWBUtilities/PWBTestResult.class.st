@@ -19,6 +19,11 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+PWBTestResult class >> failingTests [
+	^ self loadAll select: [ :each | each success asLowercase = 'false' ]
+]
+
+{ #category : #'as yet unclassified' }
 PWBTestResult class >> loadAll [
 	| result session |
 	session := self session.
@@ -55,4 +60,99 @@ PWBTestResult class >> setDriver [
 	Smalltalk
 		at: #NativePostgresDriver
 		ifAbsent: [ PharoDatabaseAccessor DefaultDriver: P3DatabaseDriver ]
+]
+
+{ #category : #'as yet unclassified' }
+PWBTestResult class >> successfulTests [
+	^ self loadAll select: [ :each | each success asLowercase = 'true' ]
+]
+
+{ #category : #accessing }
+PWBTestResult >> asserts [
+	^ asserts
+]
+
+{ #category : #accessing }
+PWBTestResult >> asserts: anObject [
+	asserts := anObject
+]
+
+{ #category : #accessing }
+PWBTestResult >> caseName [
+	^ caseName
+]
+
+{ #category : #accessing }
+PWBTestResult >> caseName: anObject [
+	caseName := anObject
+]
+
+{ #category : #accessing }
+PWBTestResult >> caseTime [
+	^ caseTime
+]
+
+{ #category : #accessing }
+PWBTestResult >> caseTime: anObject [
+	caseTime := anObject
+]
+
+{ #category : #accessing }
+PWBTestResult >> executed [
+	^ executed
+]
+
+{ #category : #accessing }
+PWBTestResult >> executed: anObject [
+	executed := anObject
+]
+
+{ #category : #accessing }
+PWBTestResult >> failureMessage [
+	^ failureMessage
+]
+
+{ #category : #accessing }
+PWBTestResult >> failureMessage: anObject [
+	failureMessage := anObject
+]
+
+{ #category : #accessing }
+PWBTestResult >> stackTrace [
+	^ stackTrace
+]
+
+{ #category : #accessing }
+PWBTestResult >> stackTrace: anObject [
+	stackTrace := anObject
+]
+
+{ #category : #accessing }
+PWBTestResult >> success [
+	^ success
+]
+
+{ #category : #accessing }
+PWBTestResult >> success: anObject [
+	success := anObject
+]
+
+{ #category : #accessing }
+PWBTestResult >> suiteName [
+	^ suiteName
+]
+
+{ #category : #accessing }
+PWBTestResult >> suiteName: anObject [
+	suiteName := anObject
+]
+
+{ #category : #accessing }
+PWBTestResult >> targetName [
+	^ targetName
+]
+
+{ #category : #accessing }
+PWBTestResult >> targetName: anObject [
+	targetName := anObject
 ]

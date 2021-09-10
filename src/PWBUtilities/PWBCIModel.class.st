@@ -128,11 +128,9 @@ PWBCIModel >> isValidTargetName [
 
 { #category : #running }
 PWBCIModel >> loadLastChanges [
-
-	self repoLocalPath hasChildren
-		ifTrue: [ self svnUpdate ]
-		ifFalse: [ self svnCheckout.
-		"	self buildProject "]
+	self repoLocalPath exists
+		ifTrue: [ self repoLocalPath ensureDeleteAll ].
+	self svnCheckout
 ]
 
 { #category : #accessing }
@@ -190,8 +188,8 @@ PWBCIModel >> repoUrl: anObject [
 PWBCIModel >> run [
 	[ [ true ]
 		whileTrue: [ self isNewCommit
-				ifTrue: [ self runViolations.
-					"self runUnitTests" ].
+				ifTrue: [ "self runViolations."
+					self runUnitTests ].
 			(Duration hours:1 ) asDelay wait ] ]
 		forkNamed: 'PWBCI_' , self repoName
 ]
