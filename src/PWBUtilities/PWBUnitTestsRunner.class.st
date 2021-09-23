@@ -94,7 +94,9 @@ PWBUnitTestsRunner >> run [
 			self isNoProtectRunning
 				ifTrue: [ LibC
 						runCommand:
-							(self basicScript: (self liblist: ((testLibs at: iter))) testSuite: testSuite).
+							(self
+								basicScript: (self liblist: (self cleanName: (testLibs at: iter) basename))
+								testSuite: testSuite).
 					iter := iter + 1 ]
 				ifFalse: [ self wait ].
 			iter = testLibs size
@@ -119,7 +121,6 @@ PWBUnitTestsRunner >> testDatabase: aString [
 PWBUnitTestsRunner >> testLibraries [
 	^ (self pathToTarget parent / 'ws_objects') children
 		select: [ :file | file basename matchesRegexIgnoringCase: 'pbunit_.*' ]
-		thenCollect: [ :aPath | self cleanName: aPath basename ]
 ]
 
 { #category : #waiting }
