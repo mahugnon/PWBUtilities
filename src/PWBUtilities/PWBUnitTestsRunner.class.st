@@ -19,17 +19,6 @@ PWBUnitTestsRunner >> author: aString [
 ]
 
 { #category : #'as yet unclassified' }
-PWBUnitTestsRunner >> basicScript [
-	| exe |
-	exe := self pathToTarget pathString
-		copyReplaceAll: self pathToTarget extension
-		with: 'exe'.
-	^  exe , ' NOM_BAS=' , self testDatabase
-		, ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target='
-		, self pathToTarget pathString , ';liblist='
-]
-
-{ #category : #'as yet unclassified' }
 PWBUnitTestsRunner >> basicScript: liblist testSuite: aString [
 	| exe |
 	exe := self pathToTarget pathString
@@ -41,11 +30,9 @@ PWBUnitTestsRunner >> basicScript: liblist testSuite: aString [
 		, ';testsuite=' , aString , ';'
 ]
 
-{ #category : #cleaning }
-PWBUnitTestsRunner >> clean [
-	(self pathToTarget parent / 'pbunit-results.xml') ensureDelete.
-	(self pathToTarget parent / 'pbunit-results.txt') ensureDelete.
-	(self pathToTarget parent / 'junit-report.xml') ensureDelete
+{ #category : #running }
+PWBUnitTestsRunner >> cleanName: aString [
+	^ aString copyReplaceAll: '.src' with: ''
 ]
 
 { #category : #accessing }
@@ -65,7 +52,7 @@ PWBUnitTestsRunner >> isAllTestExecuted [
 		ifTrue: [ Error
 				signal:
 					'I have ' , PWBTestResult loadAll size asString , 'instead of '
-						, self numberOfTests ]
+						, self numberOfTests asString  ]
 ]
 
 { #category : #running }
@@ -100,7 +87,6 @@ PWBUnitTestsRunner >> run [
 	stop := false.
 	iter := 1.
 	testSuite := '0'.
-	self clean.
 	testLibs := self testLibraries.
 	[ [ stop ]
 		whileFalse: [ iter > 1
@@ -108,9 +94,7 @@ PWBUnitTestsRunner >> run [
 			self isNoProtectRunning
 				ifTrue: [ LibC
 						runCommand:
-							(self
-								basicScript: (self liblist: (testLibs at: iter) basename)
-								testSuite: testSuite).
+							(self basicScript: (self liblist: ((testLibs at: iter))) testSuite: testSuite).
 					iter := iter + 1 ]
 				ifFalse: [ self wait ].
 			iter = testLibs size
@@ -135,6 +119,7 @@ PWBUnitTestsRunner >> testDatabase: aString [
 PWBUnitTestsRunner >> testLibraries [
 	^ (self pathToTarget parent / 'ws_objects') children
 		select: [ :file | file basename matchesRegexIgnoringCase: 'pbunit_.*' ]
+		thenCollect: [ :aPath | self cleanName: aPath basename ]
 ]
 
 { #category : #waiting }
