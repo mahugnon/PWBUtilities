@@ -74,7 +74,7 @@ PWBCIUI >> initialize [
 PWBCIUI >> initializeLocalDirectoryTextInput [
 	localDirectoryTextInput := self
 		instantiate:
-			(SpLabelledPresenter
+			(SpLabeledPresenter
 				label: 'Local directory :'
 				input: self newTextInput).
 	model localDirectory
@@ -112,17 +112,20 @@ PWBCIUI >> initializePresenters [
 
 { #category : #initialization }
 PWBCIUI >> initializeRepoUrlTextInput [
-	repoUrlTextInput := self
-		instantiate: (SpLabelledPresenter label: 'SVN URL*:' input: self newTextInput).
-	repoUrlTextInput input
-		placeholder: 'https://svn.example.com/repos/MyRepo/MyProject/trunk'
+
+	repoUrlTextInput := self instantiate:
+		                    (SpLabeledPresenter
+			                     label: 'SVN URL*:'
+			                     input: self newTextInput).
+	repoUrlTextInput input placeholder:
+		'https://svn.example.com/repos/MyRepo/MyProject/trunk'
 ]
 
 { #category : #initialization }
 PWBCIUI >> initializeTargetNameTextInput [
 	targetNameTextInput := self
 		instantiate:
-			(SpLabelledPresenter label: 'Target name*:' input: self newTextInput).
+			(SpLabeledPresenter label: 'Target name*:' input: self newTextInput).
 	targetNameTextInput input placeholder: 'abc.pbt'
 ]
 

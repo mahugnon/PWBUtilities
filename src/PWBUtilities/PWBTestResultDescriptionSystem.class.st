@@ -4,11 +4,6 @@ Class {
 	#category : #'PWBUtilities-GlopModel'
 }
 
-{ #category : #'as yet unclassified' }
-PWBTestResultDescriptionSystem class >> getDescriptor: aClassName [
-	^ self subclasses detect: [ :sub | sub name beginsWith: aClassName ]
-]
-
 { #category : #private }
 PWBTestResultDescriptionSystem >> allTableNames [
 	"Return a list of all the table names that this system uses."
