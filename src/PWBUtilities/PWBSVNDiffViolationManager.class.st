@@ -9,7 +9,7 @@ Class {
 		'headAuthor',
 		'prevAuthor'
 	],
-	#category : #PWBUtilities
+	#category : #'PWBUtilities-Core'
 }
 
 { #category : #'as yet unclassified' }
