@@ -2,40 +2,18 @@ Class {
 	#name : #PWBCILauncher,
 	#superclass : #SpPresenter,
 	#instVars : [
-		'repoUrl',
-		'svnHead',
-		'svnHeadAuthor',
-		'svnPrevAuthor',
-		'repoUrlTextInput',
-		'svnPrev',
-		'model',
-		'okButton',
-		'targetNameTextInput',
-		'localDirectoryTextInput',
-		'selectDirectoryButton'
+		'violationRunner',
+		'testRunner',
+		'model'
 	],
 	#category : #'PWBUtilities-Core'
 }
 
 { #category : #specs }
 PWBCILauncher class >> defaultSpec [
-	^ SpBoxLayout newVertical
-		add: #repoUrlTextInput;
-		add: #targetNameTextInput;
-		add:
-			(SpBoxLayout newHorizontal
-				add: #localDirectoryTextInput;
-				add:
-					(SpBoxLayout newVertical
-						add: #selectDirectoryButton
-							withConstraints: [ :constraint | constraint height: 25 ];
-						yourself)
-					width: 30;
-				yourself);
-		add:
-			(SpBoxLayout newHorizontal
-				add: #okButton width: 50;
-				yourself);
+	^ SpBoxLayout newHorizontal
+		add: #violationRunner;
+		add: #testRunner;
 		yourself
 ]
 
@@ -68,114 +46,23 @@ PWBCILauncher >> initialize [
 ]
 
 { #category : #initialization }
-PWBCILauncher >> initializeLocalDirectoryTextInput [
-	localDirectoryTextInput := self
-		instantiate:
-			(SpLabelledPresenter
-				label: 'Local directory :'
-				input: self newTextInput).
-	model localDirectory
-		ifNil: [ localDirectoryTextInput input
-				placeholder: 'C:\Users\CIMColaborator\Documents\EspaceDeTravail\Local_repository' ]
-		ifNotNil:
-			[ localDirectoryTextInput input text: model localDirectory pathString ].
-	selectDirectoryButton := self newButton
-		label: '...';
-		action: [ model
-				localDirectory: (UITheme builder chooseDirectory: 'Select a directory').
-			localDirectoryTextInput input
-				acceptText: model localDirectory pathString.
-			self update ]
-]
-
-{ #category : #initialization }
 PWBCILauncher >> initializePresenters [
 	super initializePresenters.
 	model := PWBCIModel new.
-	self initializeRepoUrlTextInput.
-	self initializeTargetNameTextInput.
-	self initializeLocalDirectoryTextInput.
-	okButton := self newButton.
-	okButton
-		label: 'OK';
-		iconName: #smallOk.
-	okButton
-		action: [ model repoUrl: repoUrlTextInput input text.
-			model targetName: targetNameTextInput input text.
-			self isFieldsValid
-				ifTrue: [ self window close.
-					model run ] ]
-]
-
-{ #category : #initialization }
-PWBCILauncher >> initializeRepoUrlTextInput [
-	repoUrlTextInput := self
-		instantiate: (SpLabelledPresenter label: 'SVN URL*:' input: self newTextInput).
-	repoUrlTextInput input
-		placeholder: 'https://svn.example.com/repos/MyRepo/MyProject/trunk'
-]
-
-{ #category : #initialization }
-PWBCILauncher >> initializeTargetNameTextInput [
-	targetNameTextInput := self
-		instantiate:
-			(SpLabelledPresenter label: 'Target name*:' input: self newTextInput).
-	targetNameTextInput input placeholder: 'abc.pbt'
+	violationRunner := self newButton.
+	violationRunner
+		label: 'Run violations';
+		action: [ model runViolations ].
+	testRunner := self newButton.
+	testRunner
+		label: 'Run Protect Tests';
+		action: [ model runTests ]
 ]
 
 { #category : #initialization }
 PWBCILauncher >> initializeWindow: aWindowPresenter [
 	aWindowPresenter
 		title: 'PWB CI Launcher';
-		initialExtent: 600 @ 230;
+		initialExtent: 400 @ 200;
 		iconNamed: #ciIcon
-]
-
-{ #category : #initialization }
-PWBCILauncher >> isFieldsValid [
-	| valid |
-	valid := true.
-	valid := self isValidRepoUrl.
-	valid := self isValidTargetName.
-	self update.
-	^ valid
-]
-
-{ #category : #initialization }
-PWBCILauncher >> isValidLocalDirectory [
-	| valid |
-	valid := true.
-	model isValidLocalDirectory
-		ifTrue:
-			[ localDirectoryTextInput descriptionPresenter: self newNullPresenter ]
-		ifFalse: [ localDirectoryTextInput
-				description: 'The local repository should be set'.
-			localDirectoryTextInput descriptionPresenter color: Color red.
-			valid := false ].
-	^ valid
-]
-
-{ #category : #initialization }
-PWBCILauncher >> isValidRepoUrl [
-	| valid |
-	valid := true.
-	model isValidRepoUrl
-		ifTrue: [ repoUrlTextInput descriptionPresenter: self newNullPresenter ]
-		ifFalse: [ repoUrlTextInput description: 'The repo url is empty or not valid'.
-			repoUrlTextInput descriptionPresenter color: Color red.
-			valid := false ].
-	^ valid
-]
-
-{ #category : #initialization }
-PWBCILauncher >> isValidTargetName [
-	| valid |
-	valid := true.
-	model isValidTargetName
-		ifTrue: [ repoUrlTextInput descriptionPresenter: self newNullPresenter ]
-		ifFalse: [ targetNameTextInput
-				description: 'The target name is empty or not valid'.
-			targetNameTextInput descriptionPresenter color: Color red.
-			valid := false ].
-	^ valid
 ]
