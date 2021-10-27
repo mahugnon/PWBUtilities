@@ -125,7 +125,7 @@ PWBUnitTestsRunner >> testLibraries [
 
 { #category : #waiting }
 PWBUnitTestsRunner >> wait [
-	delay > 3
+	delay > 10
 		ifTrue: [ LibC runCommand: 'taskkill /f /im cwm.exe' ]
 		ifFalse: [ delay := delay + 1.
 			(Duration minutes: 1) asDelay wait ]
