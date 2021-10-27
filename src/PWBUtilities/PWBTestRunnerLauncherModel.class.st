@@ -8,6 +8,14 @@ Class {
 	#category : #'PWBUtilities-Core'
 }
 
+{ #category : #running }
+PWBTestRunnerLauncherModel >> checkoutWsObject [
+	LibC
+		resultOfCommand:
+			'start svn checkout ' , self wsObjectUrl , String space
+				, (izyProtectPath / 'ws_objects') pathString
+]
+
 { #category : #initialization }
 PWBTestRunnerLauncherModel >> initialize [
 	izyProtectPath := 'E:\v2017' asFileReference
@@ -36,6 +44,7 @@ PWBTestRunnerLauncherModel >> recreateIzyProtectPath [
 PWBTestRunnerLauncherModel >> run [
 	[ [ true ]
 		whileTrue: [ self recreateIzyProtectPath.
+			self checkoutWsObject.
 			self runUnitTests.
 			(Duration days: 1) asDelay wait ] ] forkNamed: 'Test Runner'
 ]
@@ -51,4 +60,9 @@ PWBTestRunnerLauncherModel >> runUnitTests [
 { #category : #running }
 PWBTestRunnerLauncherModel >> targetName [
 	^ 'cwm.pbt'
+]
+
+{ #category : #'as yet unclassified' }
+PWBTestRunnerLauncherModel >> wsObjectUrl [
+	^ 'https://cim-svn.sa-cim.local/svn/IzyProtect_Production/branches/developpement/ws_objects'
 ]

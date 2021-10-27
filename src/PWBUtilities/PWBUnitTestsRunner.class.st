@@ -119,8 +119,8 @@ PWBUnitTestsRunner >> testDatabase: aString [
 
 { #category : #tests }
 PWBUnitTestsRunner >> testLibraries [
-	^ self pathToTarget parent children
-		select: [ :file | file basename matchesRegexIgnoringCase: 'pbunit_.*pbl' ]
+	^ (self pathToTarget parent / 'ws_objects') children
+		select: [ :file | file basename matchesRegexIgnoringCase: 'pbunit_.*' ]
 ]
 
 { #category : #waiting }
