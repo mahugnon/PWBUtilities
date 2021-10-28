@@ -24,7 +24,7 @@ PWBUnitTestsRunner >> basicScript: liblist testSuite: aString [
 	exe := self pathToTarget pathString
 		copyReplaceAll: self pathToTarget extension
 		with: 'exe'.
-	^ 'start ' , exe , ' NOM_BAS=' , self testDatabase
+	^ exe , ' NOM_BAS=' , self testDatabase
 		, ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target='
 		, self pathToTarget pathString , ';liblist=' , liblist
 		, ';testsuite=' , aString , ';'
@@ -97,8 +97,7 @@ PWBUnitTestsRunner >> run [
 							(self
 								basicScript: (self liblist: (self cleanName: (testLibs at: iter) basename))
 								testSuite: testSuite).
-					iter := iter + 1 ]
-				ifFalse: [ self wait ].
+					iter := iter + 1 ].
 			iter = testLibs size
 				ifTrue: [ stop := true.
 					self isAllTestExecuted.
@@ -125,6 +124,7 @@ PWBUnitTestsRunner >> testLibraries [
 
 { #category : #waiting }
 PWBUnitTestsRunner >> wait [
+	self halt.
 	delay > 10
 		ifTrue: [ LibC runCommand: 'taskkill /f /im cwm.exe' ]
 		ifFalse: [ delay := delay + 1.
