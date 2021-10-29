@@ -7,8 +7,8 @@ Class {
 	#instVars : [
 		'testDatabase',
 		'author',
-		'delay',
-		'numberOfTests'
+		'numberOfTests',
+		'curentTestObject'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -19,14 +19,17 @@ PWBUnitTestsRunner >> author: aString [
 ]
 
 { #category : #'as yet unclassified' }
-PWBUnitTestsRunner >> basicScript: liblist testSuite: aString [
-	| exe |
+PWBUnitTestsRunner >> basicScriptWthTestSuite: aString [
+	| exe liblist |
+	liblist := self
+		liblist: (self cleanName: curentTestObject parent basename).
 	exe := self pathToTarget pathString
 		copyReplaceAll: self pathToTarget extension
 		with: 'exe'.
 	^ exe , ' NOM_BAS=' , self testDatabase
 		, ';TYP_TRT=PB_UNIT;EMP_INI=c:\WinNT\;target='
 		, self pathToTarget pathString , ';liblist=' , liblist
+		, ';testObjectName=' , curentTestObject basenameWithoutExtension
 		, ';testsuite=' , aString , ';'
 ]
 
@@ -40,18 +43,12 @@ PWBUnitTestsRunner >> errorsLogFilePath [
 
 ]
 
-{ #category : #initialization }
-PWBUnitTestsRunner >> initialize [
-	super initialize.
-	delay := 0
-]
-
 { #category : #running }
 PWBUnitTestsRunner >> isAllTestExecuted [
 	PWBTestResult loadAll size < self numberOfTests
 		ifTrue: [ Error
 				signal:
-					'I have ' , PWBTestResult loadAll size asString , 'instead of '
+					'I have ' , PWBTestResult loadAll size asString , ' units tests executed instead of '
 						, self numberOfTests asString  ]
 ]
 
@@ -69,7 +66,7 @@ PWBUnitTestsRunner >> liblist: aString [
 { #category : #tests }
 PWBUnitTestsRunner >> numberOfTests [
 	numberOfTests
-		ifNil: [ numberOfTests := PWBTestsFinder runOn: self testLibraries ].
+		ifNil: [ numberOfTests := PWBTestsFinder runOn: self testObjects ].
 	^ numberOfTests
 ]
 
@@ -83,22 +80,19 @@ PWBUnitTestsRunner >> reportTestResult [
 
 { #category : #running }
 PWBUnitTestsRunner >> run [
-	| testLibs iter stop testSuite |
+	| testObjects iter stop testSuite |
 	stop := false.
 	iter := 1.
 	testSuite := '0'.
-	testLibs := self testLibraries.
+	testObjects := self testObjects.
 	[ [ stop ]
 		whileFalse: [ iter > 1
 				ifTrue: [ testSuite := '1' ].
 			self isNoProtectRunning
-				ifTrue: [ LibC
-						runCommand:
-							(self
-								basicScript: (self liblist: (self cleanName: (testLibs at: iter) basename))
-								testSuite: testSuite).
+				ifTrue: [ curentTestObject := testObjects at: iter.
+					LibC runCommand: (self basicScriptWthTestSuite: testSuite).
 					iter := iter + 1 ].
-			iter = testLibs size
+			iter = testObjects size
 				ifTrue: [ stop := true.
 					self isAllTestExecuted.
 					self reportTestResult ] ] ] forkNamed: 'PWBCI_Test'
@@ -117,16 +111,11 @@ PWBUnitTestsRunner >> testDatabase: aString [
 ]
 
 { #category : #tests }
-PWBUnitTestsRunner >> testLibraries [
-	^ (self pathToTarget parent / 'ws_objects') children
-		select: [ :file | file basename matchesRegexIgnoringCase: 'pbunit_.*' ]
-]
-
-{ #category : #waiting }
-PWBUnitTestsRunner >> wait [
-	self halt.
-	delay > 10
-		ifTrue: [ LibC runCommand: 'taskkill /f /im cwm.exe' ]
-		ifFalse: [ delay := delay + 1.
-			(Duration minutes: 1) asDelay wait ]
+PWBUnitTestsRunner >> testObjects [
+	| libs |
+	libs := (self pathToTarget parent / 'ws_objects') children
+		select: [ :dir | dir basename matchesRegexIgnoringCase: 'pbunit_.*' ].
+	^ (libs flatCollect: #files)
+		select:
+			[ :file | file basenameWithoutExtension matchesRegex: 'test_.*|.*_test' ]
 ]
