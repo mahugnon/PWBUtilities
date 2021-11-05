@@ -92,6 +92,7 @@ PWBUnitTestsRunner >> run [
 	iter := 1.
 	testSuite := '0'.
 	testObjects := self testObjects.
+	self halt.
 	self watchDeadProtect.
 	[ [ stop ]
 		whileFalse: [ iter > 1
@@ -133,7 +134,7 @@ PWBUnitTestsRunner >> watchDeadProtect [
 	| runningObject |
 	[ [ stop ]
 		whileFalse: [ runningObject := curentTestObject.
-			(Duration hours: 1) asDelay.
+			(Duration hours: 1) asDelay wait.
 			(runningObject = curentTestObject
 				and: [ self isDeadProtectRunning ])
 				ifTrue: [ LibC runCommand: 'taskkill /f /im cwm.exe' ] ] ]
