@@ -8,7 +8,8 @@ Class {
 		'testDatabase',
 		'author',
 		'numberOfTests',
-		'curentTestObject'
+		'curentTestObject',
+		'stop'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -53,6 +54,12 @@ PWBUnitTestsRunner >> isAllTestExecuted [
 ]
 
 { #category : #running }
+PWBUnitTestsRunner >> isDeadProtectRunning [
+	^ (LibC resultOfCommand: 'tasklist /fi "imagename eq cwm.exe"') trim
+		lines size = 3
+]
+
+{ #category : #running }
 PWBUnitTestsRunner >> isNoProtectRunning [
 	^ (LibC resultOfCommand: 'tasklist /fi "imagename eq cwm.exe"')
 		beginsWith: 'Inform'
@@ -80,11 +87,12 @@ PWBUnitTestsRunner >> reportTestResult [
 
 { #category : #running }
 PWBUnitTestsRunner >> run [
-	| testObjects iter stop testSuite |
+	| testObjects iter testSuite |
 	stop := false.
 	iter := 1.
 	testSuite := '0'.
 	testObjects := self testObjects.
+	self watchDeadProtect.
 	[ [ stop ]
 		whileFalse: [ iter > 1
 				ifTrue: [ testSuite := '1' ].
@@ -118,4 +126,16 @@ PWBUnitTestsRunner >> testObjects [
 	^ (libs flatCollect: #files)
 		select:
 			[ :file | file basenameWithoutExtension matchesRegex: 'test_.*|.*_test' ]
+]
+
+{ #category : #running }
+PWBUnitTestsRunner >> watchDeadProtect [
+	| runningObject |
+	[ [ stop ]
+		whileFalse: [ runningObject := curentTestObject.
+			(Duration hours: 1) asDelay.
+			(runningObject = curentTestObject
+				and: [ self isDeadProtectRunning ])
+				ifTrue: [ LibC runCommand: 'taskkill /f /im cwm.exe' ] ] ]
+		forkNamed: 'Timer'
 ]
