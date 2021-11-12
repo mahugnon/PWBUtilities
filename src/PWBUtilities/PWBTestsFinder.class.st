@@ -16,8 +16,7 @@ PWBTestsFinder class >> runOn: aCollectionOfFileReference [
 
 { #category : #running }
 PWBTestsFinder >> run [
-^ (TestMethodsExtractor testFiles: self testClasses) run
-	
+	^ (TestMethodsExtractor testFiles: testLibraries) run
 ]
 
 { #category : #running }

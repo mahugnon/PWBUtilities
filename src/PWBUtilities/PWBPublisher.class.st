@@ -7,7 +7,6 @@ Class {
 	#instVars : [
 		'text',
 		'attachment',
-		'author',
 		'recipientList',
 		'subject'
 	],
@@ -22,16 +21,6 @@ PWBPublisher >> attachment [
 { #category : #accessing }
 PWBPublisher >> attachment: anObject [
 	attachment := anObject
-]
-
-{ #category : #accessing }
-PWBPublisher >> author [
-	^ author
-]
-
-{ #category : #accessing }
-PWBPublisher >> author: anObject [
-	author := anObject
 ]
 
 { #category : #running }

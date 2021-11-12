@@ -45,15 +45,6 @@ PWBUnitTestsRunner >> errorsLogFilePath [
 ]
 
 { #category : #running }
-PWBUnitTestsRunner >> isAllTestExecuted [
-	PWBTestResult loadAll size < self numberOfTests
-		ifTrue: [ Error
-				signal:
-					'I have ' , PWBTestResult loadAll size asString , ' units tests executed instead of '
-						, self numberOfTests asString  ]
-]
-
-{ #category : #running }
 PWBUnitTestsRunner >> isDeadProtectRunning [
 	^ (LibC resultOfCommand: 'tasklist /fi "imagename eq cwm.exe"') trim
 		lines size = 3
@@ -78,10 +69,20 @@ PWBUnitTestsRunner >> numberOfTests [
 ]
 
 { #category : #running }
-PWBUnitTestsRunner >> reportTestResult [
+PWBUnitTestsRunner >> reportTestNonExecuted [
+	PWBTestResult loadAll size < self numberOfTests
+		ifTrue: [ self
+				reportTestResult:
+					'I have executed' , PWBTestResult loadAll size asString
+						, ' units tests  instead of ' , self numberOfTests asString ]
+]
+
+{ #category : #running }
+PWBUnitTestsRunner >> reportTestResult: message [
 	PWBTestRepport new
 		pathToTarget: self pathToTarget;
 		author: author;
+		message: message;
 		run
 ]
 
@@ -92,7 +93,6 @@ PWBUnitTestsRunner >> run [
 	iter := 1.
 	testSuite := '0'.
 	testObjects := self testObjects.
-	self halt.
 	self watchDeadProtect.
 	[ [ stop ]
 		whileFalse: [ iter > 1
@@ -103,8 +103,8 @@ PWBUnitTestsRunner >> run [
 					iter := iter + 1 ].
 			iter = testObjects size
 				ifTrue: [ stop := true.
-					self isAllTestExecuted.
-					self reportTestResult ] ] ] forkNamed: 'PWBCI_Test'
+					self reportTestNonExecuted.
+					self reportTestResult:'' ] ] ] forkNamed: 'PWBCI_Test'
 ]
 
 { #category : #running }
@@ -137,6 +137,7 @@ PWBUnitTestsRunner >> watchDeadProtect [
 			(Duration hours: 1) asDelay wait.
 			(runningObject = curentTestObject
 				and: [ self isDeadProtectRunning ])
-				ifTrue: [ LibC runCommand: 'taskkill /f /im cwm.exe' ] ] ]
+				ifTrue: [ self halt.
+					LibC runCommand: 'taskkill /f /im cwm.exe' ] ] ]
 		forkNamed: 'Timer'
 ]
