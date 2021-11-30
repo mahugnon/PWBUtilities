@@ -91,19 +91,19 @@ PWBUnitTestsRunner >> reportTestResult: message [
 PWBUnitTestsRunner >> run [
 	| testObjects iter testSuite |
 	stop := false.
-	iter := 1.
+	iter := 0.
 	self logFilePath ensureDelete.
 	testSuite := '0'.
 	testObjects := self testObjects.
 	"self watchDeadProtect."
 	[ [ stop ]
-		whileFalse: [ iter > 1
+		whileFalse: [ iter := iter + 1.
+			iter > 1
 				ifTrue: [ testSuite := '1' ].
 			self isNoProtectRunning
 				ifTrue: [ curentTestObject := testObjects at: iter.
 					self traceCr: iter asString , '/' , testObjects size asString.
-					LibC runCommand: (self basicScriptWthTestSuite: testSuite).
-					iter := iter + 1 ].
+					LibC runCommand: (self basicScriptWthTestSuite: testSuite) ].
 			iter = testObjects size
 				ifTrue: [ stop := true.
 					self reportTestNonExecuted.
