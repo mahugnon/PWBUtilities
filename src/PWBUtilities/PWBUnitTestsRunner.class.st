@@ -9,7 +9,8 @@ Class {
 		'author',
 		'numberOfTests',
 		'curentTestObject',
-		'stop'
+		'stop',
+		'logFile'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -42,6 +43,11 @@ PWBUnitTestsRunner >> cleanName: aString [
 { #category : #accessing }
 PWBUnitTestsRunner >> errorsLogFilePath [
 
+]
+
+{ #category : #initialization }
+PWBUnitTestsRunner >> initialize [
+logFile := 'E:\CITest.log' asFileReference 
 ]
 
 { #category : #running }
@@ -91,20 +97,22 @@ PWBUnitTestsRunner >> run [
 	| testObjects iter testSuite |
 	stop := false.
 	iter := 1.
+	logFile ensureDeleteFile.
 	testSuite := '0'.
 	testObjects := self testObjects.
-	self watchDeadProtect.
+	"self watchDeadProtect."
 	[ [ stop ]
 		whileFalse: [ iter > 1
 				ifTrue: [ testSuite := '1' ].
 			self isNoProtectRunning
 				ifTrue: [ curentTestObject := testObjects at: iter.
+					self traceCr: iter asString , '/' , testObjects size asString.
 					LibC runCommand: (self basicScriptWthTestSuite: testSuite).
 					iter := iter + 1 ].
 			iter = testObjects size
 				ifTrue: [ stop := true.
 					self reportTestNonExecuted.
-					self reportTestResult:'' ] ] ] forkNamed: 'PWBCI_Test'
+					self reportTestResult: '' ] ] ] forkNamed: 'PWBCI_Test'
 ]
 
 { #category : #running }
@@ -130,14 +138,27 @@ PWBUnitTestsRunner >> testObjects [
 ]
 
 { #category : #running }
+PWBUnitTestsRunner >> traceCr: aString [
+	logFile
+		writeStreamDo: [ :stream | 
+			stream
+				setToEnd;
+				<< aString;
+				space;
+				<< curentTestObject basenameWithoutExtension;
+				cr ]
+]
+
+{ #category : #running }
 PWBUnitTestsRunner >> watchDeadProtect [
 	| runningObject |
+	self deprecated: 'Not sure if it solve the problem it suppose to solve'.
 	[ [ stop ]
 		whileFalse: [ runningObject := curentTestObject.
 			(Duration hours: 1) asDelay wait.
 			(runningObject = curentTestObject
 				and: [ self isDeadProtectRunning ])
-				ifTrue: [ self halt.
+				ifTrue: [ 
 					LibC runCommand: 'taskkill /f /im cwm.exe' ] ] ]
 		forkNamed: 'Timer'
 ]

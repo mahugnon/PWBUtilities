@@ -45,15 +45,18 @@ PWBTestRepport >> initialize [
 PWBTestRepport >> message [
 	message
 		ifEmpty: [ message := 'Vous avez ' , PWBTestResult failingTests size asString
-				, ' test(s) qui ont echoues' , String crlf
-				, pathToHtmlReportFile asFileReference contents ].
+				, ' test(s) qui ont echoues' , String crlf ].
 	^ message
+]
+
+{ #category : #accessing }
+PWBTestRepport >> message: aString [ 
+	message := aString
 ]
 
 { #category : #running }
 PWBTestRepport >> run [
 	PWBPublisher new
-		attachment: pathToHtmlReportFile asFileReference;
 		text: self message;
 		subject: 'Rapport de test PBUnit';
 		run
