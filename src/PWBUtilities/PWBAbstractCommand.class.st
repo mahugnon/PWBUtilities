@@ -26,7 +26,7 @@ PWBAbstractCommand class >> updateData: aBuilder [
 ]
 
 { #category : #accessing }
-PWBAbstractCommand >> errorsLogFilePath [
+PWBAbstractCommand >> logFilePath [
 
 ]
 

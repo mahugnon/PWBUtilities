@@ -30,15 +30,15 @@ self cleanUpPBg .
 PBGRefactor runOn: self powerbuilderProjetDirectory 
 ]
 
-{ #category : #accessing }
-PBLRegenerator >> errorsLogFilePath [
-	^ self powerbuilderProjetDirectory / 'errors.log'
-]
-
 { #category : #initialization }
 PBLRegenerator >> initialize [ 
 super initialize .
 runner := 'orcascr170'
+]
+
+{ #category : #accessing }
+PBLRegenerator >> logFilePath [
+	^ self powerbuilderProjetDirectory / 'errors.log'
 ]
 
 { #category : #running }
@@ -50,7 +50,7 @@ PBLRegenerator >> run [
 		, self ensureCreateOrcascriptFile pathString.
 	LibC runCommand: command.
 	self cleanUpPBg.
-	^ self errorsLogFilePath
+	^ self logFilePath
 		readStreamEncoded: 'utf16le'
 		do: [ :stream | ^ stream contents ]
 ]
@@ -59,7 +59,7 @@ PBLRegenerator >> run [
 PBLRegenerator >> script [
 	^ 'start session',String lf,
 'set debug true' ,String lf,
-'scc set connect property logfile "' , self errorsLogFilePath pathString
+'scc set connect property logfile "' , self logFilePath pathString
 		,
 			'"',String lf,
 'scc connect offline',String lf,

@@ -28,17 +28,17 @@ PWBTestRepport >> author: anObject [
 	author := anObject
 ]
 
-{ #category : #accessing }
-PWBTestRepport >> errorsLogFilePath [
-
-	
-]
-
 { #category : #initialization }
 PWBTestRepport >> initialize [
 	super initialize.
 	timeout := 0.
 	reportStyle :='junit'
+]
+
+{ #category : #accessing }
+PWBTestRepport >> logFilePath [
+
+	
 ]
 
 { #category : #running }

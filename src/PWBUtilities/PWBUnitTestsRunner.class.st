@@ -40,16 +40,6 @@ PWBUnitTestsRunner >> cleanName: aString [
 	^ aString copyReplaceAll: '.src' with: ''
 ]
 
-{ #category : #accessing }
-PWBUnitTestsRunner >> errorsLogFilePath [
-
-]
-
-{ #category : #initialization }
-PWBUnitTestsRunner >> initialize [
-logFile := 'E:\CITest.log' asFileReference 
-]
-
 { #category : #running }
 PWBUnitTestsRunner >> isDeadProtectRunning [
 	^ (LibC resultOfCommand: 'tasklist /fi "imagename eq cwm.exe"') trim
@@ -65,6 +55,11 @@ PWBUnitTestsRunner >> isNoProtectRunning [
 { #category : #'as yet unclassified' }
 PWBUnitTestsRunner >> liblist: aString [
 	^ 'pbunit.pbl,' , aString
+]
+
+{ #category : #accessing }
+PWBUnitTestsRunner >> logFilePath [
+	^ 'E:\CITest.log' asFileReference
 ]
 
 { #category : #tests }
@@ -97,7 +92,7 @@ PWBUnitTestsRunner >> run [
 	| testObjects iter testSuite |
 	stop := false.
 	iter := 1.
-	logFile ensureDelete.
+	self logFilePath ensureDelete.
 	testSuite := '0'.
 	testObjects := self testObjects.
 	"self watchDeadProtect."
@@ -139,7 +134,7 @@ PWBUnitTestsRunner >> testObjects [
 
 { #category : #running }
 PWBUnitTestsRunner >> traceCr: aString [
-	logFile
+	self logFilePath
 		writeStreamDo: [ :stream | 
 			stream
 				setToEnd;

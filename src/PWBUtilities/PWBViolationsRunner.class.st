@@ -76,7 +76,7 @@ PWBViolationsRunner >> ensureCreateDirStructure: aString [
 ]
 
 { #category : #accessing }
-PWBViolationsRunner >> errorsLogFilePath [
+PWBViolationsRunner >> logFilePath [
 
 ]
 

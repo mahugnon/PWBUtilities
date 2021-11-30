@@ -13,11 +13,6 @@ PWBBuilder >> binaryResultName: aBaseNameWithoutExtension [
 		/ (aBaseNameWithoutExtension , '.exe')) pathString
 ]
 
-{ #category : #running }
-PWBBuilder >> errorsLogFilePath [
-^ self powerbuilderProjetDirectory / 'deploymentErrors.log'
-]
-
 { #category : #initialization }
 PWBBuilder >> initialize [ 
 super initialize .
@@ -25,12 +20,17 @@ runner := 'pbc170'
 ]
 
 { #category : #running }
+PWBBuilder >> logFilePath [
+^ self powerbuilderProjetDirectory / 'deploymentErrors.log'
+]
+
+{ #category : #running }
 PWBBuilder >> run [
 	| command |
 	command := self runner , String space , self script , String space
-		, '2>' , String space , self errorsLogFilePath pathString.
+		, '2>' , String space , self logFilePath pathString.
 	LibC runCommand: command.
-	^ self errorsLogFilePath contents lines
+	^ self logFilePath contents lines
 ]
 
 { #category : #accessing }

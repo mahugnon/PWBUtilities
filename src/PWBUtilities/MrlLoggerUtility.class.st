@@ -40,11 +40,6 @@ MrlLoggerUtility >> createModules [
 	moduleCreator moduleFolder: self pathToModules
 ]
 
-{ #category : #accessing }
-MrlLoggerUtility >> errorsLogFilePath [
-^ self powerbuilderProjetDirectory / 'MrlLogErrors.log'
-]
-
 { #category : #running }
 MrlLoggerUtility >> inserLogForPrestation [
 	| famixModel |
@@ -79,14 +74,19 @@ MrlLoggerUtility >> inserMrlLogsScriptsInPowerbuilderProject [
 	famixModel := self inserLogForPrestation.
 	command := 'xcopy' , String space , famixModel rootFolder pathString
 		, self powerbuilderProjetDirectory , String space , '/E/H/Y' , '2>'
-		, String space , self errorsLogFilePath pathString.
+		, String space , self logFilePath pathString.
 	LibC runCommand: command.
-	^ self errorsLogFilePath contents lines
+	^ self logFilePath contents lines
 ]
 
 { #category : #running }
 MrlLoggerUtility >> izySourceCode [
 	^ self powerbuilderProjetDirectory / 'ws_objects'
+]
+
+{ #category : #accessing }
+MrlLoggerUtility >> logFilePath [
+^ self powerbuilderProjetDirectory / 'MrlLogErrors.log'
 ]
 
 { #category : #'as yet unclassified' }
