@@ -97,7 +97,7 @@ PWBUnitTestsRunner >> run [
 	| testObjects iter testSuite |
 	stop := false.
 	iter := 1.
-	logFile ensureDeleteFile.
+	logFile ensureDelete.
 	testSuite := '0'.
 	testObjects := self testObjects.
 	"self watchDeadProtect."

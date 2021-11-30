@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'numberOfTest',
 		'parser',
-		'testFiles'
+		'testFiles',
+		'tests'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -18,6 +19,11 @@ TestMethodsExtractor class >> testFiles: aCollection [
 TestMethodsExtractor >> initialize [
 	numberOfTest := 0.
 	parser := PWBCommonParser
+]
+
+{ #category : #visiting }
+TestMethodsExtractor >> isTest: aString [
+	^ aString trim ~= 'setup' and: [ aString trim ~= 'teardown' ]
 ]
 
 { #category : #running }
@@ -36,5 +42,13 @@ TestMethodsExtractor >> testFiles: aCollection [
 
 { #category : #visiting }
 TestMethodsExtractor >> visitPWBASTEventDeclaration: aPWBASTEventDeclaration [
+	(self
+		isTest: (self visit: aPWBASTEventDeclaration eventReferenceName))
+		ifFalse: [ ^ self ].
 	numberOfTest := numberOfTest + 1
+]
+
+{ #category : #visiting }
+TestMethodsExtractor >> visitPWBASTEventReferenceName: aPWBASTEventReferenceName [
+	^ self visit: aPWBASTEventReferenceName eventName
 ]
