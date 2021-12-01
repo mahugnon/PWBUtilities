@@ -6,26 +6,29 @@ Class {
 	#superclass : #PWBAbstractCommand,
 	#instVars : [
 		'testDatabase',
-		'author',
 		'numberOfFailures',
 		'timeout',
 		'reportStyle',
-		'pathToHtmlReportFile',
-		'message'
+		'message',
+		'nonExecuted'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
 
-{ #category : #accessing }
-PWBTestRepport >> author [
-
-	^ author
+{ #category : #visiting }
+PWBTestRepport class >> accept: aNumber [
+	^ self subclassResponsibility
 ]
 
-{ #category : #accessing }
-PWBTestRepport >> author: anObject [
-
-	author := anObject
+{ #category : #visiting }
+PWBTestRepport class >> nonExecuted: aNumber [
+	self subclasses
+		detect: [ :sub | sub accept: aNumber ]
+		ifFound: [ :founded | 
+			founded new
+				nonExecuted: aNumber;
+				run ]
+		ifNone: [ Exception signal: 'case not found' ]
 ]
 
 { #category : #initialization }
@@ -44,8 +47,9 @@ PWBTestRepport >> logFilePath [
 { #category : #running }
 PWBTestRepport >> message [
 	message
-		ifEmpty: [ message := 'Vous avez ' , PWBTestResult failingTests size asString
-				, ' test(s) qui ont echoues' , String crlf ].
+		ifEmpty: [ message := 'Nombre de tests non executer : ' , String cr
+				, 'Nombre d''echec : ' , PWBTestResult failingTests size asString
+				, String crlf ].
 	^ message
 ]
 
@@ -54,16 +58,15 @@ PWBTestRepport >> message: aString [
 	message := aString
 ]
 
+{ #category : #accessing }
+PWBTestRepport >> nonExecuted: aNumber [
+	nonExecuted := aNumber
+]
+
 { #category : #running }
 PWBTestRepport >> run [
 	PWBPublisher new
 		text: self message;
 		subject: 'Rapport de test PBUnit';
 		run
-]
-
-{ #category : #waiting }
-PWBTestRepport >> wait [
-	timeout := timeout + 2.
-	(Duration minutes: 2) asDelay wait
 ]

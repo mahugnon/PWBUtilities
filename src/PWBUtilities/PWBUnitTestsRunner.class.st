@@ -70,21 +70,9 @@ PWBUnitTestsRunner >> numberOfTests [
 ]
 
 { #category : #running }
-PWBUnitTestsRunner >> reportTestNonExecuted [
-	PWBTestResult loadAll size < self numberOfTests
-		ifTrue: [ self
-				reportTestResult:
-					'I have executed' , PWBTestResult loadAll size asString
-						, ' units tests  instead of ' , self numberOfTests asString ]
-]
-
-{ #category : #running }
-PWBUnitTestsRunner >> reportTestResult: message [
-	PWBTestRepport new
-		pathToTarget: self pathToTarget;
-		author: author;
-		message: message;
-		run
+PWBUnitTestsRunner >> reportTestResult [
+	PWBTestRepport
+		nonExecuted: self numberOfTests - PWBTestResult loadAll size
 ]
 
 { #category : #running }
@@ -95,19 +83,17 @@ PWBUnitTestsRunner >> run [
 	self logFilePath ensureDelete.
 	testSuite := '0'.
 	testObjects := self testObjects.
-	"self watchDeadProtect."
 	[ [ stop ]
 		whileFalse: [ iter := iter + 1.
 			iter > 1
 				ifTrue: [ testSuite := '1' ].
 			self isNoProtectRunning
 				ifTrue: [ curentTestObject := testObjects at: iter.
-					self traceCr: iter asString , '/' , testObjects size asString.
+					self trace: iter asString , '/' , testObjects size asString.
 					LibC runCommand: (self basicScriptWthTestSuite: testSuite) ].
 			iter = testObjects size
 				ifTrue: [ stop := true.
-					self reportTestNonExecuted.
-					self reportTestResult: '' ] ] ] forkNamed: 'PWBCI_Test'
+					self reportTestResult ] ] ] forkNamed: 'PWBCI_Test'
 ]
 
 { #category : #running }
@@ -133,7 +119,7 @@ PWBUnitTestsRunner >> testObjects [
 ]
 
 { #category : #running }
-PWBUnitTestsRunner >> traceCr: aString [
+PWBUnitTestsRunner >> trace: aString [
 	self logFilePath
 		writeStreamDo: [ :stream | 
 			stream
