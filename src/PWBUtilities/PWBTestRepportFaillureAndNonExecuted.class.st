@@ -11,7 +11,13 @@ PWBTestRepportFaillureAndNonExecuted class >> accept: aNumber [
 
 { #category : #running }
 PWBTestRepportFaillureAndNonExecuted >> message [
+	| faillures |
+	faillures := PWBTestResult failingTests size.
 	^ 'Nombre de test non executes : ' , nonExecuted asString
-		, String crlf , 'Nombre d''echec : '
-		, PWBTestResult failingTests size asString , String crlf
+		, String space
+		, (self singularizePluralize: 'test' quantity: nonExecuted)
+		, String crlf , 'Nombre d''echec : ' , faillures asString
+		, String space
+		, (self singularizePluralize: 'test' quantity: faillures)
+		, String crlf
 ]

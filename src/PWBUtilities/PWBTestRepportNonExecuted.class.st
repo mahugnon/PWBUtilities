@@ -12,5 +12,7 @@ PWBTestRepportNonExecuted class >> accept: aNumber [
 { #category : #running }
 PWBTestRepportNonExecuted >> message [
 	^ 'Nombre de test non executes : ' , nonExecuted asString
+		, String space
+		, (self singularizePluralize: 'test' quantity: nonExecuted)
 		, String crlf
 ]

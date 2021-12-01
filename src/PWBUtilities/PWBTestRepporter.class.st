@@ -44,3 +44,10 @@ PWBTestRepporter >> run [
 		subject: 'Rapport de test PBUnit';
 		run
 ]
+
+{ #category : #'as yet unclassified' }
+PWBTestRepporter >> singularizePluralize: aString quantity: aNumber [
+	^ aNumber > 1
+		ifTrue: [ aString , 's' ]
+		ifFalse: [ aString ]
+]

@@ -11,6 +11,9 @@ PWBTestRepportFaillure class >> accept: aNumber [
 
 { #category : #running }
 PWBTestRepportFaillure >> message [
-	^ 'Nombre d''echec : ' , PWBTestResult failingTests size asString
+	| faillures |
+	faillures := PWBTestResult failingTests size.
+	^ 'Nombre d''echec : ' , faillures asString , String space
+		, (self singularizePluralize: 'test' quantity: faillures)
 		, String crlf
 ]
