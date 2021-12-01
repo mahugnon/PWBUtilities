@@ -71,7 +71,7 @@ PWBUnitTestsRunner >> numberOfTests [
 
 { #category : #running }
 PWBUnitTestsRunner >> reportTestResult [
-	PWBTestRepport
+	PWBTestRepporter
 		nonExecuted: self numberOfTests - PWBTestResult loadAll size
 ]
 

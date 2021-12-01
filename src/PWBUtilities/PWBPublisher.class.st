@@ -23,6 +23,12 @@ PWBPublisher >> attachment: anObject [
 	attachment := anObject
 ]
 
+{ #category : #tests }
+PWBPublisher >> defaultRecipientList [
+	^ {'MahugnonHonore.Houekpetodji@sa-cim.fr'.
+	'homahugnon@gmail.com' . 'Jerome.Sudich@sa-cim.fr'.'Jean-Baptiste.Monville@sa-cim.fr'}
+]
+
 { #category : #running }
 PWBPublisher >> hasAttachment [
 	^ attachment isNotNil
@@ -31,7 +37,23 @@ PWBPublisher >> hasAttachment [
 { #category : #initialization }
 PWBPublisher >> initialize [
 	super initialize.
-	recipientList := self testRecipientList
+	recipientList := self defaultRecipientList
+]
+
+{ #category : #running }
+PWBPublisher >> message [
+	| mailMessage |
+	mailMessage := MailMessage empty
+		from: 'pwbcritics@gmail.com';
+		date: DateAndTime now asEmailString;
+		subject: self subject;
+		to: self recipientList;
+		addAlternativePart: text contentType: 'text/html'.
+	self hasAttachment
+		ifTrue: [ mailMessage
+				addAttachmentFrom: attachment readStream
+				withName: attachment basename ].
+	^ mailMessage
 ]
 
 { #category : #running }
@@ -52,16 +74,7 @@ PWBPublisher >> run [
 { #category : #running }
 PWBPublisher >> sendMailMessageToCommitAuthor [
 	| mailMessage |
-	mailMessage := MailMessage empty
-		from: 'pwbcritics@gmail.com';
-		date: DateAndTime now asEmailString;
-		subject: self subject;
-		to: self recipientList;
-		addAlternativePart: text contentType: 'text/html'.
-	self hasAttachment
-		ifTrue: [ mailMessage
-				addAttachmentFrom: attachment readStream
-				withName: attachment basename ].
+	mailMessage := self message.
 	ZdcSecureSMTPClient
 		sendPWBCriticsUsingGMailAccountPassword: '8v$oPDA0cA'
 		to: self recipientList
@@ -76,12 +89,6 @@ PWBPublisher >> subject [
 { #category : #running }
 PWBPublisher >> subject: aString [
 	subject := aString
-]
-
-{ #category : #tests }
-PWBPublisher >> testRecipientList [
-	^ {'MahugnonHonore.Houekpetodji@sa-cim.fr'.
-	'homahugnon@gmail.com'}
 ]
 
 { #category : #accessing }

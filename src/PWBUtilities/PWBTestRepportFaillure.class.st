@@ -1,6 +1,6 @@
 Class {
 	#name : #PWBTestRepportFaillure,
-	#superclass : #PWBTestRepport,
+	#superclass : #PWBTestRepporter,
 	#category : #'PWBUtilities-PWBCommands'
 }
 
@@ -11,8 +11,6 @@ PWBTestRepportFaillure class >> accept: aNumber [
 
 { #category : #running }
 PWBTestRepportFaillure >> message [
-	message
-		ifEmpty: [ message := 'Nombre d''echec : '
-				, PWBTestResult failingTests size asString , String crlf ].
-	^ message
+	^ 'Nombre d''echec : ' , PWBTestResult failingTests size asString
+		, String crlf
 ]

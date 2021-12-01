@@ -1,6 +1,6 @@
 Class {
 	#name : #PWBTestRepportNonExecuted,
-	#superclass : #PWBTestRepport,
+	#superclass : #PWBTestRepporter,
 	#category : #'PWBUtilities-PWBCommands'
 }
 
@@ -11,8 +11,6 @@ PWBTestRepportNonExecuted class >> accept: aNumber [
 
 { #category : #running }
 PWBTestRepportNonExecuted >> message [
-	message
-		ifEmpty: [ message := 'Nombre de test non executes : ' , nonExecuted asString
-				, String crlf ].
-	^ message
+	^ 'Nombre de test non executes : ' , nonExecuted asString
+		, String crlf
 ]
