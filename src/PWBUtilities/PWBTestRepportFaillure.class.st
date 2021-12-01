@@ -12,8 +12,27 @@ PWBTestRepportFaillure class >> accept: aNumber [
 { #category : #running }
 PWBTestRepportFaillure >> message [
 	| faillures |
-	faillures := PWBTestResult failingTests size.
-	^ 'Nombre d''echec : ' , faillures asString , String space
-		, (self singularizePluralize: 'test' quantity: faillures)
-		, String crlf
+	faillures := PWBTestResult failingTests.
+	^ String
+		streamContents: [ :stream | 
+			stream
+				<< 'Nombre d''echec : ';
+				<< faillures size asString;
+				space;
+				<< (self singularizePluralize: 'test' quantity: faillures size);
+				cr;
+				<< '<ul>'.
+			faillures
+				do: [ :fail | 
+					stream
+						<< '<li>';
+						space;
+						<< '<h3>';
+						<< fail caseName;
+						space;
+						<< ':</h3> <span>';
+						<< fail failureMessage;
+						<< '</span> </li>';
+						cr ].
+			stream << '</ul>' ]
 ]

@@ -40,7 +40,7 @@ PWBTestRepporter >> nonExecuted: aNumber [
 { #category : #running }
 PWBTestRepporter >> run [
 	PWBPublisher new
-		text: self message;
+		text: self styledMessage;
 		subject: 'Rapport de test PBUnit';
 		run
 ]
@@ -50,4 +50,19 @@ PWBTestRepporter >> singularizePluralize: aString quantity: aNumber [
 	^ aNumber > 1
 		ifTrue: [ aString , 's' ]
 		ifFalse: [ aString ]
+]
+
+{ #category : #running }
+PWBTestRepporter >> styledMessage [
+	^ String
+		streamContents: [ :stream | 
+			stream
+				<<
+					'<style  type="text/css">
+	h3{
+font-weight: 500 }
+
+	</style>';
+				cr;
+				<< self message ]
 ]
