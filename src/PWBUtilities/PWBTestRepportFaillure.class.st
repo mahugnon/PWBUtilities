@@ -6,7 +6,7 @@ Class {
 
 { #category : #visiting }
 PWBTestRepportFaillure class >> accept: aNumber [
-	^ aNumber = 0 and: [ PWBTestResult failingTests size asString > 0 ]
+	^ aNumber = 0 and: [ PWBTestResult failingTests isNotEmpty ]
 ]
 
 { #category : #running }
