@@ -4,16 +4,34 @@ Class {
 	#instVars : [
 		'violationRunner',
 		'testRunner',
-		'model'
+		'model',
+		'testRunnerTitle',
+		'violationRunnerTitle'
 	],
 	#category : #'PWBUtilities-Core'
 }
 
 { #category : #specs }
 PWBCILauncher class >> defaultSpec [
-	^ SpBoxLayout newHorizontal
-		add: #violationRunner;
-		add: #testRunner;
+	^ SpPanedLayout newHorizontal
+		add:
+			(SpBoxLayout newVertical
+				add: #violationRunner;
+				add: #violationRunnerTitle;
+				yourself)
+			withConstraints: [ :constraints | 
+				constraints
+					beNotResizable;
+					beNotShrinkable ];
+		add:
+			(SpBoxLayout newVertical
+				add: #testRunner;
+				add: #testRunnerTitle;
+				yourself)
+			withConstraints: [ :constraints | 
+				constraints
+					beNotResizable;
+					beNotShrinkable ];
 		yourself
 ]
 
@@ -35,7 +53,7 @@ PWBCILauncher class >> updateData: aBuilder [
 	<worldMenu>
 	(aBuilder item: #PWBCILauncher)
 		parent: #PWBTools;
-		help: 'Launch powerbuilder ci';
+		help: 'Tâches Protects';
 		label: #PWBCILauncher;
 		action: [ self run ]
 ]
@@ -51,18 +69,29 @@ PWBCILauncher >> initializePresenters [
 	model := PWBCIModel new.
 	violationRunner := self newButton.
 	violationRunner
-		label: 'Run violations';
+		icon: PWBIconLibrary violationIcon;
 		action: [ model runViolations ].
+	violationRunnerTitle := self newLabel.
+	violationRunnerTitle
+	color: Color blue ;
+		label: 'Linter';
+		emphasis: #bold.
 	testRunner := self newButton.
+	testRunnerTitle := self newLabel.
+	testRunnerTitle
+	color: Color blue ;
+		label: 'Tests unitaires';
+		emphasis: #bold.
 	testRunner
-		label: 'Run Protect Tests';
+		icon: PWBIconLibrary testIcon;
 		action: [ model runTests ]
 ]
 
 { #category : #initialization }
 PWBCILauncher >> initializeWindow: aWindowPresenter [
 	aWindowPresenter
-		title: 'PWB CI Launcher';
-		initialExtent: 400 @ 200;
+		title: 'Utilitaire d''Izy Protect';
+		isResizeable: false;
+		initialExtent: 320 @ 180;
 		iconNamed: #ciIcon
 ]
