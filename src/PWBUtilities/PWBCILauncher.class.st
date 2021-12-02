@@ -54,7 +54,8 @@ PWBCILauncher class >> updateData: aBuilder [
 	(aBuilder item: #PWBCILauncher)
 		parent: #PWBTools;
 		help: 'Tâches Protects';
-		label: #PWBCILauncher;
+		label: 'Utilitaire d''Izy Protect';
+		icon: PWBIconLibrary mutcimIcon ; 
 		action: [ self run ]
 ]
 
