@@ -41,7 +41,7 @@ PWBTestRepporter >> nonExecuted: aNumber [
 PWBTestRepporter >> run [
 	PWBPublisher new
 		text: self styledMessage;
-		subject: 'Rapport de test PBUnit';
+		subject: 'Rapport de tests unitaires du ' , Date today ddmmyyyy;
 		run
 ]
 
