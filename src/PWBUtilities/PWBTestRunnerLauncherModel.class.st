@@ -42,11 +42,9 @@ PWBTestRunnerLauncherModel >> recreateIzyProtectPath [
 
 { #category : #running }
 PWBTestRunnerLauncherModel >> run [
-	[ [ true ]
-		whileTrue: [ self recreateIzyProtectPath.
-			self checkoutWsObject.
-			self runUnitTests.
-			(Duration days: 1) asDelay wait ] ] forkNamed: 'Test Runner'
+	self recreateIzyProtectPath.
+	self checkoutWsObject.
+	self runUnitTests
 ]
 
 { #category : #running }

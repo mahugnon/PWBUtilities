@@ -25,8 +25,8 @@ PWBPublisher >> attachment: anObject [
 
 { #category : #tests }
 PWBPublisher >> defaultRecipientList [
-	^ {'MahugnonHonore.Houekpetodji@sa-cim.fr'.
-	'Jerome.Sudich@sa-cim.fr' . 'Jean-Baptiste.Monville@sa-cim.fr'.'leonard.lamarque@sa-cim.fr'.'cedric.montuelle@sa-cim.fr'}
+	^ {'MahugnonHonore.Houekpetodji@sa-cim.fr'".
+	'Jerome.Sudich@sa-cim.fr' . 'Jean-Baptiste.Monville@sa-cim.fr'.'leonard.lamarque@sa-cim.fr'.'cedric.montuelle@sa-cim.fr'"}
 ]
 
 { #category : #running }
