@@ -74,18 +74,18 @@ PWBCILauncher >> initializePresenters [
 		action: [ model runViolations ].
 	violationRunnerTitle := self newLabel.
 	violationRunnerTitle
-	color: Color blue ;
+		color: Color blue;
 		label: 'Linter';
 		emphasis: #bold.
 	testRunner := self newButton.
 	testRunnerTitle := self newLabel.
 	testRunnerTitle
-	color: Color blue ;
+		color: Color blue;
 		label: 'Tests unitaires';
 		emphasis: #bold.
 	testRunner
 		icon: PWBIconLibrary testIcon;
-		action: [ model runTests ]
+		action: [ self runTests ]
 ]
 
 { #category : #initialization }
@@ -95,4 +95,9 @@ PWBCILauncher >> initializeWindow: aWindowPresenter [
 		isResizeable: false;
 		initialExtent: 320 @ 180;
 		iconNamed: #ciIcon
+]
+
+{ #category : #initialization }
+PWBCILauncher >> runTests [
+	^ model runTests
 ]
