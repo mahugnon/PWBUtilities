@@ -44,7 +44,8 @@ PWBTestRunnerLauncherModel >> recreateIzyProtectPath [
 PWBTestRunnerLauncherModel >> run [
 	self recreateIzyProtectPath.
 	self checkoutWsObject.
-	self runUnitTests
+	self runUnitTests.
+	Smalltalk snapshot: false andQuit: true
 ]
 
 { #category : #running }
