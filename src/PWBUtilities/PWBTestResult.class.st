@@ -19,6 +19,14 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+PWBTestResult class >> dropAndCreate [
+	| session |
+	session := self session.
+	session recreateTablesIfError: [ :ex |  ].
+	session logout
+]
+
+{ #category : #'as yet unclassified' }
 PWBTestResult class >> failingTests [
 	^ self loadAll select: [ :each | each success asLowercase = 'false' ]
 ]
