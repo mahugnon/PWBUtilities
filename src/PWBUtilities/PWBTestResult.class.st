@@ -19,11 +19,11 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-PWBTestResult class >> dropAndCreate [
-	| session |
+PWBTestResult class >> emptyResultTable [
+	| session testResults |
+	testResults := self loadAll.
 	session := self session.
-	session recreateTablesIfError: [ :ex |  ].
-	session logout
+	session deleteAll: testResults
 ]
 
 { #category : #'as yet unclassified' }
