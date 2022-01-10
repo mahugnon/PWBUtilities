@@ -15,6 +15,7 @@ PWBTestRepportSuccess >> message [
 		streamContents: [ :stream | 
 			stream
 				<< '<h3>Fellicitation :) tous les';
+				space;
 				<< PWBTestResult loadAll size asString;
 				space;
 				<< ' tests passent.</h3>';
