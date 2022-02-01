@@ -83,7 +83,7 @@ PWBUnitTestsRunner >> run [
 	self logFilePath ensureDelete.
 	testSuite := '0'.
 	testObjects := self testObjects.
-	[ [ stop ]
+	[ stop ]
 		whileFalse: [ iter := iter + 1.
 			iter > 1
 				ifTrue: [ testSuite := '1' ].
@@ -93,7 +93,7 @@ PWBUnitTestsRunner >> run [
 					LibC runCommand: (self basicScriptWthTestSuite: testSuite) ].
 			iter = testObjects size
 				ifTrue: [ stop := true.
-					self reportTestResult ] ] ] forkNamed: 'PWBCI_Test'
+					self reportTestResult ] ]
 ]
 
 { #category : #running }

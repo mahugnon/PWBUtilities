@@ -19,6 +19,14 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
+PWBTestResult class >> emptyResultTable [
+	| session testResults |
+	testResults := self loadAll.
+	session := self session.
+	session deleteAll: testResults
+]
+
+{ #category : #'as yet unclassified' }
 PWBTestResult class >> failingTests [
 	^ self loadAll select: [ :each | each success asLowercase = 'false' ]
 ]

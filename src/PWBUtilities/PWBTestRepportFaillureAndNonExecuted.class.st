@@ -28,8 +28,7 @@ PWBTestRepportFaillureAndNonExecuted >> message [
 				cr;
 				<< '<ul>'.
 			faillures
-				do:
-					[ :fail | 
+				do: [ :fail | 
 					stream
 						<< '<li>';
 						space;
@@ -39,5 +38,6 @@ PWBTestRepportFaillureAndNonExecuted >> message [
 						<< ':</h4> <span>';
 						<< fail failureMessage;
 						<< '</span> </li>';
-						cr ] stream << '</ul>' ]
+						cr ].
+			stream << '</ul>' ]
 ]
