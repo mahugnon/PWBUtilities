@@ -77,11 +77,8 @@ PWBViolationLauncherModel >> repoUrl: anObject [
 
 { #category : #running }
 PWBViolationLauncherModel >> run [
-	[ [ true ]
-		whileTrue: [ self isNewCommit
-				ifTrue: [ self runViolations ].
-			(Duration minutes: 5) asDelay wait ] ]
-		forkNamed: 'Violation_' , self repoName
+	self isNewCommit
+		ifTrue: [ self runViolations ]
 ]
 
 { #category : #running }

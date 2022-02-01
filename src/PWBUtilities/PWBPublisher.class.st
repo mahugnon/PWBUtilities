@@ -8,7 +8,8 @@ Class {
 		'text',
 		'attachment',
 		'recipientList',
-		'subject'
+		'subject',
+		'author'
 	],
 	#category : #'PWBUtilities-PWBCommands'
 }
@@ -21,6 +22,11 @@ PWBPublisher >> attachment [
 { #category : #accessing }
 PWBPublisher >> attachment: anObject [
 	attachment := anObject
+]
+
+{ #category : #accessing }
+PWBPublisher >> author: aString [
+	author := aString
 ]
 
 { #category : #tests }

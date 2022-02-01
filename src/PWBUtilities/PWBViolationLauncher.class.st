@@ -83,3 +83,13 @@ PWBViolationLauncher >> isValidRepoUrl [
 			valid := false ].
 	^ valid
 ]
+
+{ #category : #accessing }
+PWBViolationLauncher >> repoUrl: aString [
+	model repoUrl: aString
+]
+
+{ #category : #running }
+PWBViolationLauncher >> run [
+	model run
+]
