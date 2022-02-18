@@ -78,7 +78,8 @@ PWBViolationLauncherModel >> repoUrl: anObject [
 { #category : #running }
 PWBViolationLauncherModel >> run [
 	self isNewCommit
-		ifTrue: [ self runViolations ]
+		ifTrue: [ self runViolations ].
+		Smalltalk snapshot: true andQuit: true
 ]
 
 { #category : #running }
