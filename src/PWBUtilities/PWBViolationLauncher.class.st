@@ -5,6 +5,9 @@ Class {
 		'repoUrlTextInput',
 		'model'
 	],
+	#classInstVars : [
+		'launcher'
+	],
 	#category : #'PWBUtilities-Core'
 }
 
@@ -15,6 +18,12 @@ PWBViolationLauncher class >> defaultSpec [
 		yourself
 ]
 
+{ #category : #accessing }
+PWBViolationLauncher class >> launcher [
+	launcher ifNil: [ launcher := self new ].
+	^ launcher
+]
+
 { #category : #running }
 PWBViolationLauncher class >> run [
 	<example>
@@ -23,7 +32,7 @@ PWBViolationLauncher class >> run [
 
 { #category : #running }
 PWBViolationLauncher class >> run: aSVNRepoURL [
-	self new
+	self launcher
 		repoUrl: aSVNRepoURL;
 		run
 ]
