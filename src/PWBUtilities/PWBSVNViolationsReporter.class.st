@@ -174,7 +174,9 @@ PWBSVNViolationsReporter >> sendMailMessageToCommitAuthor [
 	PWBPublisher new
 		recipientList: self recipientList;
 		text: stream contents;
-		subject: 'Powerbuilder Critics violation';
+		subject:
+			'Rapport sur les violations de code du serveur'
+				, (LibC resultOfCommand: 'hostname');
 		author: headAuthor;
 		run
 ]

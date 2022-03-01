@@ -41,7 +41,9 @@ PWBTestRepporter >> nonExecuted: aNumber [
 PWBTestRepporter >> run [
 	PWBPublisher new
 		text: self styledMessage;
-		subject: 'Rapport de tests unitaires du ' , Date today ddmmyyyy;
+		subject:
+			'Rapport de tests unitaires du ' , Date today ddmmyyyy
+				, ' du serveur ' , (LibC resultOfCommand: 'hostname');
 		run
 ]
 

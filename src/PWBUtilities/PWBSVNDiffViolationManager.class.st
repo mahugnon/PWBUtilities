@@ -137,6 +137,12 @@ PWBSVNDiffViolationManager >> repoName: aString [
 	repoName := aString
 ]
 
+{ #category : #running }
+PWBSVNDiffViolationManager >> reportViolation: violations [
+	self prepareViolationReport: violations.
+	self sendMailMessageToCommitAuthor
+]
+
 { #category : #'as yet unclassified' }
 PWBSVNDiffViolationManager >> reportViolation: diffHeadPrev withFixed: diffPrevHead [
 	(self existViolations: diffHeadPrev)
