@@ -33,7 +33,8 @@ PWBPublisher >> author: aString [
 PWBPublisher >> defaultRecipientList [
 	^ {'MahugnonHonore.Houekpetodji@sa-cim.fr'.
 	'Jerome.Sudich@sa-cim.fr' . 'Jean-Baptiste.Monville@sa-cim.fr'.
-	'leonard.lamarque@sa-cim.fr' . 'cedric.montuelle@sa-cim.fr'}
+	'leonard.lamarque@sa-cim.fr' . 'cedric.montuelle@sa-cim.fr'.
+	'claire.m@sa-cim.fr'.'thomas.d@sa-cim.fr'.'romain.l@sa-cim.fr'.'geoffrey.l@sa-cim.fr'.'emmanuel.l@sa-cim.fr'}
 ]
 
 { #category : #running }
